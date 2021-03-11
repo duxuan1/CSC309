@@ -18,10 +18,10 @@ function pauseGame(){
 function moveByKey(event){
 	var key = event.key;
 	var moveMap = { 
-		'a': new Pair(-5,0),
-		's': new Pair(0,5),
-		'd': new Pair(5,0),
-		'w': new Pair(0,-5)
+                'a': new Pair(-5,0),
+                's': new Pair(0,5),
+                'd': new Pair(5,0),
+                'w': new Pair(0,-5)
 	};
 	if(key in moveMap){
 		stage.player.velocity=moveMap[key];
@@ -46,10 +46,79 @@ function login(){
                 console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
 
         	$("#ui_login").hide();
+                $("#ui_register").hide();
         	$("#ui_play").show();
 
 		setupGame();
 		startGame();
+
+        }).fail(function(err){
+                console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
+        });
+}
+
+function register(){
+	credentials =  { 
+		"username": $("#createUser").val(), 
+		"password": $("#createPassword").val() 
+	};
+
+        $.ajax({
+                method: "POST",
+                url: "/api/register",
+                data: JSON.stringify({}),
+		headers: { "Authorization": "Basic " + btoa(credentials.username + ":" + credentials.password) },
+                processData:false,
+                contentType: "application/json; charset=utf-8",
+                dataType:"json"
+        }).done(function(data, text_status, jqXHR){
+                console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
+
+        	$("#ui_login").hide();
+                $("#ui_register").show();
+        	$("#ui_play").hide();
+
+        }).fail(function(err){
+                console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
+        });
+}
+
+function go_register(){
+        $.ajax({
+                method: "POST",
+                url: "/api/go_register",
+                data: JSON.stringify({}),
+		headers: { "Authorization": "Basic " + btoa(credentials.username + ":" + credentials.password) },
+                processData:false,
+                contentType: "application/json; charset=utf-8",
+                dataType:"json"
+        }).done(function(data, text_status, jqXHR){
+                console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
+
+        	$("#ui_login").hide();
+                $("#ui_register").show();
+        	$("#ui_play").hide();
+
+        }).fail(function(err){
+                console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
+        });
+}
+
+function go_login(){
+        $.ajax({
+                method: "POST",
+                url: "/api/go_login",
+                data: JSON.stringify({}),
+		headers: { "Authorization": "Basic " + btoa(credentials.username + ":" + credentials.password) },
+                processData:false,
+                contentType: "application/json; charset=utf-8",
+                dataType:"json"
+        }).done(function(data, text_status, jqXHR){
+                console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
+
+        	$("#ui_login").show();
+                $("#ui_register").hide();
+        	$("#ui_play").hide();
 
         }).fail(function(err){
                 console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
@@ -74,7 +143,12 @@ function test(){
 $(function(){
         // Setup all events here and display the appropriate UI
         $("#loginSubmit").on('click',function(){ login(); });
+        $("#registerSubmit").on('click',function(){ register(); });
+        $("#gotoRegister").on('click',function(){ go_register(); });
+        $("#gotoLogin").on('click',function(){ go_login(); });
+        
         $("#ui_login").show();
+        $("#ui_register").hide();
         $("#ui_play").hide();
 });
 

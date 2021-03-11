@@ -38,7 +38,7 @@ app.post('/api/test', function (req, res) {
  * Authorization: Basic YXJub2xkOnNwaWRlcm1hbg==
  * Authorization: Basic " + btoa("arnold:spiderman"); in javascript
 **/
-app.use('/api/auth', function (req, res,next) {
+app.use('/api/auth', function (req, res, next) {
 	if (!req.headers.authorization) {
 		return res.status(403).json({ error: 'No credentials sent!' });
   	}
@@ -51,26 +51,67 @@ app.use('/api/auth', function (req, res,next) {
 
 		var username = m[1];
 		var password = m[2];
-
-		console.log(username+" "+password);
+		console.log("trying to login");
+		console.log("username: " + username + " password: " + password);
 
 		let sql = 'SELECT * FROM ftduser WHERE username=$1 and password=sha512($2)';
-        	pool.query(sql, [username, password], (err, pgRes) => {
+        pool.query(sql, [username, password], (err, pgRes) => {
   			if (err){
-                		res.status(403).json({ error: 'Not authorized'});
+                res.status(403).json({ error: 'Not authorized'});
 			} else if(pgRes.rowCount == 1){
 				next(); 
 			} else {
-                		res.status(403).json({ error: 'Not authorized'});
-        		}
+				res.status(403).json({ error: 'Not authorized'});
+			}
 		});
 	} catch(err) {
-               	res.status(403).json({ error: 'Not authorized'});
+        res.status(403).json({ error: 'Not authorized'});
 	}
 });
 
 // All routes below /api/auth require credentials 
 app.post('/api/auth/login', function (req, res) {
+	res.status(200); 
+	res.json({"message":"authentication success"}); 
+});
+
+app.post('/api/register', function (req, res, next) {
+	if (!req.headers.authorization) {
+		return res.status(403).json({ error: 'No credentials sent!' });
+  	}
+	try {
+		// var credentialsString = Buffer.from(req.headers.authorization.split(" ")[1], 'base64').toString();
+		var m = /^Basic\s+(.*)$/.exec(req.headers.authorization);
+
+		var user_pass = Buffer.from(m[1], 'base64').toString()
+		m = /^(.*):(.*)$/.exec(user_pass); // probably should do better than this
+
+		var username = m[1];
+		var password = m[2];
+		console.log("trying to register");
+		console.log("username: " + username + " password: " + password);
+
+		let sql = "INSERT INTO ftduser VALUES($1, sha512($2))";
+        pool.query(sql, [username, password], (err) => {
+			if (err){
+                res.status(403).json({ error: err});
+			} else {
+				res.status(200).json({"message":"authentication success"}); 
+				next();
+			}
+			return;
+		});
+	} catch(err) {
+        res.status(403).json({ error: 'Not authorized'});
+	}
+});
+
+app.post('/api/go_register', function (req, res) {
+	res.status(200); 
+	res.json({"message":"authentication success"}); 
+});
+
+app.post('/api/go_login', function (req, res) {
 	res.status(200); 
 	res.json({"message":"authentication success"}); 
 });
