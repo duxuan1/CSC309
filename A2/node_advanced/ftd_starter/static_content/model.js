@@ -7,34 +7,30 @@ class Stage {
 	
 		this.actors=[]; // all actors on this stage (monsters, player, boxes, ...)
 		this.player=null; // a special actor, the player
-	
+		this.enemies = [];
 		// the logical width and height of the stage
 		this.width=canvas.width;
 		this.height=canvas.height;
 
 		// Add the player to the center of the stage
 		var velocity = new Pair(0,0);
-		var radius = 20;
+		var radius = 15;
 		var colour= 'rgba(0,0,0,1)';
 		var position = new Pair(Math.floor(this.width/2), Math.floor(this.height/2));
 		this.addPlayer(new Player(this, position, velocity, colour, radius));
 	
-		// Add in some Balls
-		var total=100;
-		while(total>0){
+		// Add 5 enemies
+		var i;
+		for (i = 0; i < 5; i++) {
 			var x=Math.floor((Math.random()*this.width)); 
 			var y=Math.floor((Math.random()*this.height)); 
-			if(this.getActor(x,y)===null){
-				var velocity = new Pair(rand(20), rand(20));
-				var red=randint(255), green=randint(255), blue=randint(255);
-				var radius = randint(20);
-				var alpha = Math.random();
-				var colour= 'rgba('+red+','+green+','+blue+','+alpha+')';
-				var position = new Pair(x,y);
-				var b = new Ball(this, position, velocity, colour, radius);
-				this.addActor(b);
-				total--;
-			}
+			var velocity = new Pair(rand(5), rand(5));
+			var radius = 10;
+			var colour= 'rgba(225,0,0,1)';
+			var position = new Pair(x,y);
+			var enemy = new Enemy(this, position, velocity, colour, radius);
+			this.addActor(enemy);
+			this.enemies.push(enemy);
 		}
 	}
 
@@ -159,14 +155,52 @@ class Ball {
 	}
 }
 
+class Bullet extends Ball {
+	kill() {
+		var i;
+		var enemies_array = this.stage.enemies;
+		var middle_x = this.position.x + this.radius / 2;
+		var middle_y = this.position.y + this.radius / 2;
+
+		for (i = 0; i < enemies_array.length; i++) {
+			var enemy = this.stage.enemies[i];
+			var enemy_middlex = enemy.position.x + enemy.radius / 2;
+			var enemy_middley = enemy.position.y + enemy.radius / 2;
+			if (middle_x + enemy.radius + this.radius > enemy_middlex &&
+				middle_x - enemy.radius + this.radius < enemy_middlex &&  
+				middle_y + enemy.radius + this.radius > enemy_middley &&
+				middle_y - enemy.radius + this.radius < enemy_middley) {
+					this.stage.removeActor(enemies_array[i])
+				}
+		}
+	}
+
+	step() {
+		this.kill();
+		this.position.x=this.position.x+this.velocity.x;
+		this.position.y=this.position.y+this.velocity.y;
+
+		// disappear when hit wall
+		if(this.position.x<0) {this.stage.removeActor(this);}
+		if(this.position.x>this.stage.width) {this.stage.removeActor(this);}
+		if(this.position.y<0) {this.stage.removeActor(this);}
+		if(this.position.y>this.stage.height) {this.stage.removeActor(this);}
+		this.intPosition();
+	}
+}
+
 class Player extends Ball {
-	draw(context){
-		context.fillStyle = this.colour;
-   		context.fillRect(this.x, this.y, this.radius,this.radius);
-		/**
-		context.beginPath(); 
-		context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false); 
-		context.stroke();   
-		**/
+	constructor(stage, position, velocity, colour, radius){
+		super(stage, position, velocity, colour, radius);
+		this.mousex = 0;
+		this.mousey = 0;
+	}
+}
+
+class Enemy extends Ball {
+	constructor(stage, position, velocity, colour, radius){
+		super(stage, position, velocity, colour, radius);
+		this.mousex = 0;
+		this.mousey = 0;
 	}
 }
