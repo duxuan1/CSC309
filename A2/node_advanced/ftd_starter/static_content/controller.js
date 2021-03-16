@@ -2,6 +2,7 @@ var stage=null;
 var view = null;
 var interval=null;
 var credentials={ "username": "", "password":"" };
+const USER_EXIST = 23505;
 function setupGame(){
 	stage=new Stage(document.getElementById('stage'));
 
@@ -80,6 +81,11 @@ function login(){
 
         }).fail(function(err){
                 console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
+                $("#password").focus();
+                $("#loginuserNameErr").show();
+                $("#loginuserNameErr").text("User name or password is incorrect");
+                $("#loginuserNameErr").fadeOut(3000);
+                return;
         });
 }
 
@@ -88,6 +94,38 @@ function register(){
 		"username": $("#createUser").val(), 
 		"password": $("#createPassword").val() 
 	};
+
+        if(credentials.username==""){
+                $("#createUser").focus();
+                $("#userNameErr").show();
+                $("#userNameErr").text("User name is required");
+                $("#userNameErr").fadeOut(3000);
+                return;
+        }
+        
+        if(credentials.password==""){
+                $("#createPassword").focus();
+                $("#passwordErr").show();
+                $("#passwordErr").text("Password is required");
+                $("#passwordErr").fadeOut(3000);
+                return;
+        }
+
+        if($("#confirmPassword").val()==""){
+                $("#confirmPassword").focus();
+                $("#confirmPassErr").show();
+                $("#confirmPassErr").text("Please enter your password again");
+                $("#confirmPassErr").fadeOut(3000);
+                return;
+        }
+
+        if($("#confirmPassword").val()!="" && credentials.password!="" && $("#confirmPassword").val()!=credentials.password){
+                $("#confirmPassword").focus();
+                $("#confirmPassErr").show();
+                $("#confirmPassErr").text("The passwords do not match");
+                $("#confirmPassErr").fadeOut(3000);
+                return;
+        }
 
         $.ajax({
                 method: "POST",
@@ -100,12 +138,23 @@ function register(){
         }).done(function(data, text_status, jqXHR){
                 console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
 
-        	$("#ui_login").show();
-                $("#ui_register").hide();
-        	$("#ui_play").hide();
+
+                $("#registatus").text("Registration completed! Coming back to Login page");
+                $("#registatus").fadeOut(3000, function(){
+                        $("#ui_login").show();
+                        $("#ui_register").hide();
+        	        $("#ui_play").hide();
+                })
+
 
         }).fail(function(err){
                 console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
+                if(err.responseJSON.error.code==USER_EXIST){
+                        $("#createUser").focus();
+                        $("#userNameErr").show();
+                        $("#userNameErr").text("User name alredy exist");
+                        $("#userNameErr").fadeOut(3000);
+                }
         });
 }
 

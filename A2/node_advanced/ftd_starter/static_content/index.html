@@ -21,18 +21,19 @@
 					<tr>
 						<th><label for="username">User</label></th>
 						<td><input type="text" id="username" placeholder="User Name" /></td>
+						<td><b id="loginuserNameErr"></b></td>
 					</tr>
 					<tr>
 						<th><label for="password">Passowrd</label></th>
 						<td><input type="password" id="password" placeholder="Password" /></td>
 					</tr>
 					<tr>
-						<th><label for="loginSubmit">Login</label></th>
+						<th>&nbsp;</th>
 						<td><input type="submit" id="loginSubmit" value="Login"></td>
 					</tr>
 					<tr>
-						<th><label for="gotoRegister">Register</label></th>
-						<td><input type="submit" id="gotoRegister" value="Go to register Page"></td>
+						<th>&nbsp;</th>
+						<td><input type="submit" id="gotoRegister" value="Register"></td>
 					</tr>
 				</table>
 			</div>
@@ -42,22 +43,30 @@
 				<h1>Register</h1>
 				<table>
 					<tr>
-						<th><label for="createuser">User</label></th>
-						<td><input type="text" id="createUser" placeholder="User Name" /></td>
+						<th><label for="createuser">User Name</label></th>
+						<td><input type="text" id="createUser" placeholder="User Name"/></td>
+						<td><b id="userNameErr"></b></td>
 					</tr>
+
 					<tr>
 						<th><label for="createPassword">Passowrd</label></th>
-						<td><input type="password" id="createPassword" placeholder="Password" /></td>
+						<td><input type="password" id="createPassword" placeholder="Password"/></td>
+						<td><b id="passwordErr"></b></td>
 					</tr>
-					<tr>
-						<th><label for="register">Register</label></th>
+
+					<tr><th><label for="confirmPassword">Confirm Password</label></th>
+						<td><input type="password" id="confirmPassword" placeholder="Confirm password"/></td>
+						<td><b id="confirmPassErr"></b></td>
+					</tr>
+					
+					<tr><th>&nbsp;</th>
 						<td><input type="submit" id="registerSubmit" value="Create your account"></td>
+						<td><input type="submit" id="gotoLogin" value="Login with existing account"></td>
 					</tr>
-					<tr>
-						<th><label for="gotoLogin">Login</label></th>
-						<td><input type="submit" id="gotoLogin" value="Go to login Page"></td>
-					</tr>
+
+					
 				</table>
+				<b id="registatus"></b>
 			</div>
 		</div>
 		<div id="ui_play">
