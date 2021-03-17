@@ -85,14 +85,26 @@ app.post('/api/auth/instruction', function (req, res) {
 	res.json({"message":"get instructions"}); 
 });
 
-app.get('/api/auth/stats/:userName/', function (req, res) {
+app.get('/api/auth/stats/:userName', function (req, res) {
 	res.status(200); 
 	res.json({"message":"get to stats"}); 
 });
 
-app.get('/api/auth/profile/:userName/', function (req, res) {
-	res.status(200); 
-	res.json({"message":"get to profile"}); 
+app.get('/api/auth/profile/:userName', function (req, res) {
+	var userName = req.params.userName;
+	console.log(userName);
+	let sql = 'SELECT * FROM ftduser WHERE username=$1';
+	pool.query(sql, [userName], (err, pgRes) => {
+		var result = {};
+  		if (err) {
+			res.status(500).json({ error: 'DB error'});
+  		} else {
+			//result[counterName] = row["counterValue"];
+			console.log(pgRes);
+			res.json(pgRes.rows);
+			res.status(200);
+		} 
+	});
 });
 
 app.post('/api/auth/logout', function (req, res) {
@@ -152,7 +164,8 @@ app.post('/api/auth/test', function (req, res) {
 	res.json({"message":"got to /api/auth/test"}); 
 });
 
-app.use('/',express.static('static_content')); 
+
+app.use('/',express.static('static_content'));
 
 app.listen(port, function () {
   	console.log('Example app listening on port '+port);

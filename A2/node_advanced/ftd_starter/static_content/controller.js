@@ -102,6 +102,9 @@ function login(){
 
 		// setupGame();
 		// startGame();
+                $("#username").val("");
+                $("#password").val("");
+                setupGame();
                 play();
 
         }).fail(function(err){
@@ -188,9 +191,7 @@ function register(){
 
                 $("#registatus").text("Registration completed! Coming back to Login page");
                 $("#registatus").fadeOut(2000, function(){
-                        $("#ui_login").show();
-                        $("#ui_register").hide();
-        	        $("#ui_play").hide();
+                        displayUI("#ui_login");
                 })
 
 
@@ -217,11 +218,7 @@ function play(){
         }).done(function(data, text_status, jqXHR){
                 console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
 
-                $("#ui_login").hide();
-                $("#ui_register").hide();
-        	$("#ui_play").show();
-
-        	setupGame();
+                displayUI("#ui_play");
 		startGame();
 
         }).fail(function(err){
@@ -241,6 +238,8 @@ function getInstruction(){
         }).done(function(data, text_status, jqXHR){
                 console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
                 console.log("get to instructions")
+                pauseGame();
+                displayUI("#ui_instructions");
 
         }).fail(function(err){
                 console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
@@ -248,15 +247,62 @@ function getInstruction(){
 }
 
 function getStats(){
+        $.ajax({
+                method: "GET",
+                url: "/api/auth/stats/" + credentials.username,
+                data: JSON.stringify({}),
+		headers: { "Authorization": "Basic " + btoa(credentials.username + ":" + credentials.password) },
+                processData:false,
+                contentType: "application/json; charset=utf-8",
+                dataType:"json"
+        }).done(function(data, text_status, jqXHR){
+                console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
+                
+                pauseGame();
+                displayUI("#ui_stats");
 
+        }).fail(function(err){
+                console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
+        });
 }
 
 function getProfile(){
+        $.ajax({
+                method: "GET",
+                url: "/api/auth/profile/" + credentials.username,
+                data: JSON.stringify({}),
+		headers: { "Authorization": "Basic " + btoa(credentials.username + ":" + credentials.password) },
+                processData:false,
+                contentType: "application/json; charset=utf-8",
+                dataType:"json"
+        }).done(function(data, text_status, jqXHR){
+                console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
+                
+                pauseGame();
+                displayUI("#ui_profile");
 
+        }).fail(function(err){
+                console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
+        });
 }
 
 function logout(){
+        $.ajax({
+                method: "POST",
+                url: "/api/auth/logout",
+                data: JSON.stringify({}),
+		headers: { "Authorization": "Basic " + btoa(credentials.username + ":" + credentials.password) },
+                processData:false,
+                contentType: "application/json; charset=utf-8",
+                dataType:"json"
+        }).done(function(data, text_status, jqXHR){
+                console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
+                credentials={ "username": "", "password":"" };
+        	displayUI("#ui_login");
 
+        }).fail(function(err){
+                console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
+        });   
 }
 
 function go_register(){
@@ -271,9 +317,7 @@ function go_register(){
         }).done(function(data, text_status, jqXHR){
                 console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
 
-        	$("#ui_login").hide();
-                $("#ui_register").show();
-        	$("#ui_play").hide();
+        	displayUI("#ui_register");
 
         }).fail(function(err){
                 console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
@@ -292,9 +336,7 @@ function go_login(){
         }).done(function(data, text_status, jqXHR){
                 console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
 
-        	$("#ui_login").show();
-                $("#ui_register").hide();
-        	$("#ui_play").hide();
+        	displayUI("#ui_login");
 
         }).fail(function(err){
                 console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
@@ -316,6 +358,29 @@ function test(){
         });
 }
 
+function displayUI(ui){
+        /**
+         * This function takes a id for a ui div element
+         * in index.html, modify other elements' properties
+         * so that only the ui with this id is displayed.
+         *
+         */
+        $('div[class="ui"]').not(ui).each(function(){
+                $(this).hide();
+        });
+        $(ui).show();
+        if(ui!="#ui_login" && ui!="#ui_register"){
+                $("#navigation").show();
+                var selectedNavbtn = "#" + ui.split("_")[1] + "Nav";
+                $('button[class="navbtn"]').not(selectedNavbtn).each(function(){
+                        $(this).css({"background-color": "black", "color":"white"});
+                })
+                $(selectedNavbtn).css({"background-color": "white", "color":"black"});
+        }else{
+                $("#navigation").hide();
+        }
+}
+
 $(function(){
         // Setup all events here and display the appropriate UI
         $("#loginSubmit").on('click',function(){ login(); });
@@ -324,15 +389,12 @@ $(function(){
         $("#gotoLogin").on('click',function(){ go_login(); });
         
         //Nav
-        $("#playNav").click(play);
-        $("#instrNav").click(getInstruction);
-        $("#statsNav").click(getStats);
-        $("#profileNav").click(getProfile);
-        $("#logoutNav").click(logout);
+        $("#playNav").on('click',function(){ play(); });
+        $("#instructionsNav").on('click',function(){ getInstruction(); });
+        $("#statsNav").on('click',function(){ getStats(); });
+        $("#profileNav").on('click',function(){ getProfile(); });
+        $("#logoutNav").on('click',function(){ logout(); });
         
-        
-        $("#ui_login").show();
-        $("#ui_register").hide();
-        $("#ui_play").hide();
+        displayUI("#ui_login");
 });
 

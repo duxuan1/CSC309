@@ -15,8 +15,17 @@
 		<title>f0rt9it32d</title>
 	</head>
 	<body bgcolor="ffffff">
-		
-		<div id="ui_login">
+		<nav id="navigation">
+			<h1 id="game-main">f0rt9it32d</h1>
+			<ul>
+			<li> <button class="navbtn" id="playNav">Play</button> </li>
+			<li> <button class="navbtn" id="instructionsNav">Instructions</button> </li>
+			<li> <button class="navbtn" id="statsNav">Stats</button> </li>
+			<li> <button class="navbtn" id="profileNav">Profile</button> </li>
+			<li> <button class="navbtn" id="logoutNav">Logout</button> </li> 
+			</ul>
+		</nav>
+		<div id="ui_login" class="ui">
 			<div>
 				<h1>f0rt9it32d</h1>
 				<h1>Login</h1>
@@ -42,7 +51,7 @@
 				</table>
 			</div>
 		</div>
-		<div id="ui_register">
+		<div id="ui_register" class="ui">
 			<div>
 				<h1>f0rt9it32d</h1>
 				<h1>Register</h1>
@@ -103,20 +112,22 @@
 				<b id="registatus"></b>
 			</div>
 		</div>
-		<div id="ui_play">
-			<nav>
-				<h1 id="game-main">f0rt9it32d</h1>
-				<ul>
-				<li> <button id="playNav">Play</button> </li>
-				<li> <button id="instrNav">Instructions</button> </li>
-				<li> <button id="statsNav">Stats</button> </li>
-				<li> <button id="profileNav">Profile</button> </li>
-				<li> <button id="logoutNav">Logout</button> </li> 
-				</ul>
-			</nav>
+		<div id="ui_play" class="ui">
 			<center>
 				<canvas id="stage" width="800" height="800" style="border:1px solid black;"> </canvas>
 			</center>
+		</div>
+
+		<div id="ui_instructions" class="ui">
+			<p>Instructions in this page</p>
+		</div>
+
+		<div id="ui_stats" class="ui">
+			<p>Stats in this page</p>
+		</div>
+
+		<div id="ui_profile" class="ui">
+			<p>Profile in this page</p>
 		</div>
 	</body>
 </html>
