@@ -96,12 +96,13 @@ function login(){
         }).done(function(data, text_status, jqXHR){
                 console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
 
-        	$("#ui_login").hide();
-                $("#ui_register").hide();
-        	$("#ui_play").show();
+        	// $("#ui_login").hide();
+                // $("#ui_register").hide();
+        	// $("#ui_play").show();
 
-		setupGame();
-		startGame();
+		// setupGame();
+		// startGame();
+                play();
 
         }).fail(function(err){
                 console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
@@ -204,6 +205,60 @@ function register(){
         });
 }
 
+function play(){
+        $.ajax({
+                method: "POST",
+                url: "/api/auth/play",
+                data: JSON.stringify({}),
+		headers: { "Authorization": "Basic " + btoa(credentials.username + ":" + credentials.password) },
+                processData:false,
+                contentType: "application/json; charset=utf-8",
+                dataType:"json"
+        }).done(function(data, text_status, jqXHR){
+                console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
+
+                $("#ui_login").hide();
+                $("#ui_register").hide();
+        	$("#ui_play").show();
+
+        	setupGame();
+		startGame();
+
+        }).fail(function(err){
+                console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
+        });
+}
+
+function getInstruction(){
+        $.ajax({
+                method: "POST",
+                url: "/api/auth/instruction",
+                data: JSON.stringify({}),
+		headers: { "Authorization": "Basic " + btoa(credentials.username + ":" + credentials.password) },
+                processData:false,
+                contentType: "application/json; charset=utf-8",
+                dataType:"json"
+        }).done(function(data, text_status, jqXHR){
+                console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
+                console.log("get to instructions")
+
+        }).fail(function(err){
+                console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
+        });
+}
+
+function getStats(){
+
+}
+
+function getProfile(){
+
+}
+
+function logout(){
+
+}
+
 function go_register(){
         $.ajax({
                 method: "POST",
@@ -267,6 +322,14 @@ $(function(){
         $("#registerSubmit").on('click',function(){ register(); });
         $("#gotoRegister").on('click',function(){ go_register(); });
         $("#gotoLogin").on('click',function(){ go_login(); });
+        
+        //Nav
+        $("#playNav").click(play);
+        $("#instrNav").click(getInstruction);
+        $("#statsNav").click(getStats);
+        $("#profileNav").click(getProfile);
+        $("#logoutNav").click(logout);
+        
         
         $("#ui_login").show();
         $("#ui_register").hide();
