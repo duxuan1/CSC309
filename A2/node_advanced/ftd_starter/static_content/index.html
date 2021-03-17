@@ -20,12 +20,13 @@
 				<table>
 					<tr>
 						<th><label for="username">User</label></th>
-						<td><input type="text" id="username" placeholder="User Name" /></td>
+						<td><input type="text" id="username" placeholder="User Name"/></td>
 						<td><b id="loginuserNameErr"></b></td>
 					</tr>
 					<tr>
 						<th><label for="password">Passowrd</label></th>
-						<td><input type="password" id="password" placeholder="Password" /></td>
+						<td><input type="password" id="password" placeholder="Password"/></td>
+						<td><b id="loginPassErr"></b></td>
 					</tr>
 					<tr>
 						<th>&nbsp;</th>
@@ -50,20 +51,49 @@
 
 					<tr>
 						<th><label for="createPassword">Passowrd</label></th>
-						<td><input type="password" id="createPassword" placeholder="Password"/></td>
+						<td><input type="password" id="createPassword" placeholder="Password" /></td>
 						<td><b id="passwordErr"></b></td>
 					</tr>
 
 					<tr><th><label for="confirmPassword">Confirm Password</label></th>
-						<td><input type="password" id="confirmPassword" placeholder="Confirm password"/></td>
+						<td><input type="password" id="confirmPassword" placeholder="Confirm password" /></td>
 						<td><b id="confirmPassErr"></b></td>
+					</tr>
+
+					<tr><th><label for="birthday">Birthday</label></th>
+						<td> 
+							<input type="date" id="birthday" name="birthday" >
+							<td><b id="birthdayErr"></b></td>
+						</td>
+					</tr>
+
+					<tr><th><label for="skill">Skill</label></th>
+						<td> 
+							<input type="radio" id="beginner" name="skill" value="beginner" > <label for="beginner">beginner</label>
+							<input type="radio" id="intermidiate" name="skill" value="intermidiate"> <label for="intermidiate">intermidiate</label>
+							<input type="radio" id="advanced" name="skill" value="advanced"> <label for="advanced">advanced</label>
+						</td>
+						<td><b id="skillErr"></b></td>
+					</tr>
+					
+					<tr><th><label for="playtime">I plan to play:</label></th>
+						<td>
+						<input type="checkbox" id="morningbox" name="playtimebox" value="morning">
+						<label for="morningbox">morning</label>
+						<input type="checkbox" id="afternoonbox" name="playtimebox" value="afternoon">
+						<label for="afternoonbox">afternoon</label>
+						<input type="checkbox" id="eveningbox" name="playtimebox" value="evening">
+						<label for="eveningbox">evening</label>
+						</td>
 					</tr>
 					
 					<tr><th>&nbsp;</th>
 						<td><input type="submit" id="registerSubmit" value="Create your account"></td>
-						<td><input type="submit" id="gotoLogin" value="Login with existing account"></td>
 					</tr>
 
+					<tr><th>&nbsp;</th>
+						<td><input type="submit" id="gotoLogin" value="Login with existing account"></td>
+					</tr>
 					
 				</table>
 				<b id="registatus"></b>

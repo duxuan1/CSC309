@@ -61,6 +61,22 @@ function login(){
 		"password": $("#password").val() 
 	};
 
+        if(credentials.username==""){
+                $("#username").focus();
+                $("#loginuserNameErr").show();
+                $("#loginuserNameErr").text("User name is required");
+                $("#loginuserNameErr").fadeOut(3000);
+                return;
+        }
+
+        if(credentials.password==""){
+                $("#password").focus();
+                $("#loginPassErr").show();
+                $("#loginPassErr").text("Password is required");
+                $("#loginPassErr").fadeOut(3000);
+                return;
+        }
+
         $.ajax({
                 method: "POST",
                 url: "/api/auth/login",
@@ -84,8 +100,8 @@ function login(){
                 $("#password").focus();
                 $("#loginuserNameErr").show();
                 $("#loginuserNameErr").text("User name or password is incorrect");
-                $("#loginuserNameErr").fadeOut(3000);
-                return;
+                $("#password").val("");
+                $("#loginuserNameErr").fadeOut(2000);
         });
 }
 
@@ -123,14 +139,36 @@ function register(){
                 $("#confirmPassword").focus();
                 $("#confirmPassErr").show();
                 $("#confirmPassErr").text("The passwords do not match");
+                $("#confirmPassword").val("");
                 $("#confirmPassErr").fadeOut(3000);
                 return;
         }
 
+        if($("#birthday").val()==""){
+                $("#birthday").focus();
+                $("#birthdayErr").show();
+                $("#birthdayErr").text("Birthday is required");
+                $("#birthdayErr").fadeOut(3000);
+                return;
+        }
+
+        if($("input[type='radio'][name='skill']:checked").val()==null){
+                $("#birthdayErr").show();
+                $("#birthdayErr").text("Please tell us your skill level:)");
+                $("#birthdayErr").fadeOut(3000);
+        }
+
+        var times = [];
+        const checkboxes = $("input[type='checkbox'][name='playtimebox']:checked").each(function(){
+                times.push(this.value);
+        });
+
         $.ajax({
                 method: "POST",
                 url: "/api/register",
-                data: JSON.stringify({}),
+                data: JSON.stringify({"birthday":$("#birthday").val(), 
+                                "skill":$("input[type='radio'][name='skill']:checked").val(),
+                                "prefer_time":times}),
 		headers: { "Authorization": "Basic " + btoa(credentials.username + ":" + credentials.password) },
                 processData:false,
                 contentType: "application/json; charset=utf-8",
@@ -140,7 +178,7 @@ function register(){
 
 
                 $("#registatus").text("Registration completed! Coming back to Login page");
-                $("#registatus").fadeOut(3000, function(){
+                $("#registatus").fadeOut(2000, function(){
                         $("#ui_login").show();
                         $("#ui_register").hide();
         	        $("#ui_play").hide();

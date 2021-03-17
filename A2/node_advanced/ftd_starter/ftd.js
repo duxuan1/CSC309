@@ -86,13 +86,19 @@ app.post('/api/register', function (req, res, next) {
 		var user_pass = Buffer.from(m[1], 'base64').toString()
 		m = /^(.*):(.*)$/.exec(user_pass); // probably should do better than this
 
+		console.log(req.body);
+		var reqdata = req.body;
+		var birthday = reqdata.birthday;
+		var skill = reqdata.skill;
+		var prefer = reqdata.prefer_time;
+
 		var username = m[1];
 		var password = m[2];
 		console.log("trying to register");
-		console.log("username: " + username + " password: " + password);
+		console.log("username: " + username + " password: " + password + " birthday: " + birthday + " skill: " + skill);
 
-		let sql = "INSERT INTO ftduser VALUES($1, sha512($2))";
-        pool.query(sql, [username, password], (err) => {
+		let sql = "INSERT INTO ftduser VALUES($1, sha512($2), $3, $4, $5)";
+        pool.query(sql, [username, password, birthday, skill, prefer], (err) => {
 			if (err){
                 res.status(403).json({ error: err});
 			} else {
