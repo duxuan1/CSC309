@@ -75,6 +75,31 @@ app.post('/api/auth/login', function (req, res) {
 	res.json({"message":"authentication success"}); 
 });
 
+app.post('/api/auth/play', function (req, res) {
+	res.status(200); 
+	res.json({"message":"authenticated to play"}); 
+});
+
+app.post('/api/auth/instruction', function (req, res) {
+	res.status(200); 
+	res.json({"message":"get instructions"}); 
+});
+
+app.get('/api/auth/stats/:userName/', function (req, res) {
+	res.status(200); 
+	res.json({"message":"get to stats"}); 
+});
+
+app.get('/api/auth/profile/:userName/', function (req, res) {
+	res.status(200); 
+	res.json({"message":"get to profile"}); 
+});
+
+app.post('/api/auth/logout', function (req, res) {
+	res.status(200); 
+	res.json({"message":"log out"}); 
+});
+
 app.post('/api/register', function (req, res, next) {
 	if (!req.headers.authorization) {
 		return res.status(403).json({ error: 'No credentials sent!' });
