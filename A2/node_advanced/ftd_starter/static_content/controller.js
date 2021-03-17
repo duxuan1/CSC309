@@ -8,10 +8,12 @@ function setupGame(){
 
 	// https://javascript.info/keyboard-events
 	document.addEventListener('keydown', moveByKey);
+        document.addEventListener('keyup', stopByKey);
         document.addEventListener('mousemove', moveByMouse);
+        document.addEventListener('mouseup', clickByMouse);
 }
 function startGame(){
-	interval=setInterval(function(){ stage.step(); stage.draw(); },100);
+	interval=setInterval(function(){stage.step(); stage.draw(); },100);
 }
 function pauseGame(){
 	clearInterval(interval);
@@ -28,27 +30,33 @@ function moveByKey(event){
 	if(key in moveMap){
 		stage.player.velocity=moveMap[key];
 	}
-        if (key == 'f') {
-                // create a bullet, display on the stage
-                var velocity = new Pair(stage.player.mousex, stage.player.mousey);
-                var radius = 5;
-                var colour= 'rgba(0,0,0,1)';
-                var player_position = stage.player.position
-                var position = new Pair(player_position.x + stage.player.radius/2, 
-                        player_position.y + stage.player.radius/2)
-                var b = new Bullet(stage, position, velocity, colour, radius);
-                stage.addActor(b);
+}
 
-                // player have limited amunition
-                // Todo
+function stopByKey(event) {
+        var key = event.key;
+	var moveMap = { 
+                'a': new Pair(0,0),
+                's': new Pair(0,0),
+                'd': new Pair(0,0),
+                'w': new Pair(0,0),
+	};
+	if(key in moveMap){
+		stage.player.velocity=moveMap[key];
+	}    
+}
+
+function clickByMouse(event) {
+        if (event.button == 0) {
+                stage.player.fire();
         }
 }
+
 function moveByMouse(event){
         var x = event.clientX - stage.canvas.getBoundingClientRect().left;
 	var y = event.clientY - stage.canvas.getBoundingClientRect().top;  
         var volx = x - stage.player.x;
         var voly = y - stage.player.y;
-        var divide = Math.max(Math.abs(volx), Math.abs(voly)) / 20;
+        var divide = Math.max(Math.abs(volx), Math.abs(voly)) / 10;
         volx = volx / divide;
         voly = voly / divide;
         stage.player.mousex = volx;
