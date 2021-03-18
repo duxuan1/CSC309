@@ -100,7 +100,6 @@ app.get('/api/auth/profile/:userName', function (req, res) {
 			res.status(500).json({ error: 'DB error'});
   		} else {
 			//result[counterName] = row["counterValue"];
-			console.log(pgRes);
 			res.json(pgRes.rows);
 			res.status(200);
 		} 
