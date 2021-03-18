@@ -12,20 +12,39 @@ function setupGame(){
         document.addEventListener('mousemove', moveByMouse);
         document.addEventListener('mouseup', clickByMouse);
 }
+
+// function startGame(){
+// 	interval=setInterval(function(){stage.step(); stage.draw(); },100);
+// }
+
 function startGame(){
-	interval=setInterval(function(){stage.step(); stage.draw(); },100);
+	interval=setInterval(function(){
+                stage.step(); 
+                stage.draw();
+                if (stage.getState() == -1 || stage.getState() == 1) {
+                        pauseGame();
+                        console.log("game finish");
+                }},
+        100);
 }
+
 function pauseGame(){
 	clearInterval(interval);
 	interval=null;
 }
+
+function endGame() {
+	clearInterval(interval);
+	interval = null;
+}
+
 function moveByKey(event){
 	var key = event.key;
 	var moveMap = { 
-                'a': new Pair(-10,0),
-                's': new Pair(0,10),
-                'd': new Pair(10,0),
-                'w': new Pair(0,-10),
+                'a': new Pair(-20,0),
+                's': new Pair(0,20),
+                'd': new Pair(20,0),
+                'w': new Pair(0,-20),
 	};
 	if(key in moveMap){
 		stage.player.velocity=moveMap[key];
@@ -47,20 +66,30 @@ function stopByKey(event) {
 
 function clickByMouse(event) {
         if (event.button == 0) {
-                stage.player.fire();
+                var left_boundary = stage.canvas.getBoundingClientRect().left;
+                var top_boundary = stage.canvas.getBoundingClientRect().top;
+                var x = event.clientX - left_boundary;
+                var y = event.clientY - top_boundary; 
+                if (x > 0 && x < 800 && y > 0 && y < 800 && event.clientY >= 75) {
+                        stage.player.fire();
+                }
         }
 }
 
 function moveByMouse(event){
-        var x = event.clientX - stage.canvas.getBoundingClientRect().left;
-	var y = event.clientY - stage.canvas.getBoundingClientRect().top;  
-        var volx = x - stage.player.x;
-        var voly = y - stage.player.y;
-        var divide = Math.max(Math.abs(volx), Math.abs(voly)) / 10;
-        volx = volx / divide;
-        voly = voly / divide;
-        stage.player.mousex = volx;
-        stage.player.mousey = voly;
+        var left_boundary = stage.canvas.getBoundingClientRect().left;
+        var top_boundary = stage.canvas.getBoundingClientRect().top;
+        var x = event.clientX - left_boundary;
+	var y = event.clientY - top_boundary; 
+        if (x > 0 && x < 800 && y > 0 && y < 800) {
+                var volx = x - stage.player.x;
+                var voly = y - stage.player.y;
+                var divide = Math.max(Math.abs(volx), Math.abs(voly)) / 20;
+                volx = volx / divide;
+                voly = voly / divide;
+                stage.player.mousex = volx;
+                stage.player.mousey = voly;
+        }
 }
 
 function login(){
@@ -303,6 +332,7 @@ function logout(){
                 console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
                 credentials={ "username": "", "password":"" };
         	displayUI("#ui_login");
+                endGame();
 
         }).fail(function(err){
                 console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
