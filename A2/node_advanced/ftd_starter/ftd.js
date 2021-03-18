@@ -93,14 +93,12 @@ app.get('/api/auth/stats/:userName', function (req, res) {
 app.get('/api/auth/profile/:userName', function (req, res) {
 	var userName = req.params.userName;
 	console.log(userName);
-	let sql = 'SELECT * FROM ftduser WHERE username=$1';
+	let sql = "SELECT *, to_char(birthday, 'yyyy-mm-dd') as birthdayRe FROM ftduser WHERE username=$1";
 	pool.query(sql, [userName], (err, pgRes) => {
-		var result = {};
   		if (err) {
 			res.status(500).json({ error: 'DB error'});
   		} else {
-			//result[counterName] = row["counterValue"];
-			res.json(pgRes.rows);
+			res.json(pgRes.rows[0]);
 			res.status(200);
 		} 
 	});

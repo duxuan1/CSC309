@@ -128,7 +128,86 @@
 		</div>
 
 		<div id="ui_profile" class="ui">
-			<p>Profile in this page</p>
+			<div class="profileView">
+				<h1 id="profileGreeting"></h1>
+				<div id="profileInfoViewing">
+					<table class="profileTable">
+					<tr><th><label for="skill">Skill level:</label></th>
+						<td> 
+							<b id="profileSkill"></b>
+						</td>
+					</tr>
+
+					<tr><th><label for="birthday">Birthday:</label></th>
+						<td><b id="profileBirthday"></b></td>
+					</tr>
+
+					<tr><th><label for="playtime">Prefered time:</label></th>
+						<td>
+							<b id="profilePlaytime"></b>
+						</td>
+					</tr>
+
+					<!-- <tr>
+						<th><label for="createPassword">Passowrd</label></th>
+						<td><input type="password" id="createPassword" placeholder="Password" /></td>
+						<td><b id="passwordErr"></b></td>
+					</tr>
+
+					<tr><th><label for="confirmPassword">Confirm Password</label></th>
+						<td><input type="password" id="confirmPassword" placeholder="Confirm password" /></td>
+						<td><b id="confirmPassErr"></b></td>
+					</tr> -->
+					</table>
+					<button class="profilebtn" id="profileEdit">Edit profile</button>	
+				</div>
+				
+				<div id="profileInfoEditing">
+					<table class="profileTable">
+						<tr>
+							<th><label for="changeUserName">User Name:</label></th>
+							<td><input type="text" id="changeUserName" placeholder="User Name"/></td>
+						</tr>
+
+						<tr>
+							<th><label for="newPassword">New Passowrd:</label></th>
+							<td><input type="password" id="newPassword" placeholder="Password" /></td>
+						</tr>
+
+						<tr>
+							<th><label for="confirmNewPassword">Confirm New Password:</label></th>
+							<td><input type="password" id="confirmNewPassword" placeholder="Confirm new password" /></td>
+						</tr>
+
+						<tr><th><label for="birthday">Birthday</label></th>
+							<td> 
+								<input type="date" id="newBirthday" name="birthday" >
+							</td>
+						</tr>
+
+						<tr><th><label for="skill">New Skill Level:</label></th>
+							<td> 
+								<input type="radio" id="profileBeginner" name="pskill" value="beginner" > <label for="beginner">beginner</label>
+								<input type="radio" id="profileIntermidiate" name="pskill" value="intermidiate"> <label for="intermidiate">intermidiate</label>
+								<input type="radio" id="profileAdvanced" name="pskill" value="advanced"> <label for="advanced">advanced</label>
+							</td>
+						</tr>
+
+						<tr><th><label for="playtime">I plan to play:</label></th>
+							<td>
+							<input type="checkbox" id="pmorningbox" name="playtimebox" value="morning">
+							<label for="morningbox">morning</label>
+							<input type="checkbox" id="pafternoonbox" name="playtimebox" value="afternoon">
+							<label for="afternoonbox">afternoon</label>
+							<input type="checkbox" id="peveningbox" name="playtimebox" value="evening">
+							<label for="eveningbox">evening</label>
+							</td>
+						</tr>
+					</table>
+					<button class="profilebtn" id="profileSave">Save</button>
+				</div>
+			</div>
+				
 		</div>
 	</body>
 </html>

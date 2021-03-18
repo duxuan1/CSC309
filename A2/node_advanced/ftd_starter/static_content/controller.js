@@ -306,8 +306,12 @@ function getProfile(){
                 dataType:"json"
         }).done(function(data, text_status, jqXHR){
                 console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
-                
                 pauseGame();
+                $("#profileGreeting").text("Hi " + data.username + String.fromCodePoint(0x1F609));
+                $("#profileSkill").text(data.skill);
+                $("#profileBirthday").text(data.birthdayre);
+                $("#profilePlaytime").text(data.prefer_time);
+                console.log(data.username);
                 displayUI("#ui_profile");
 
         }).fail(function(err){
@@ -417,6 +421,16 @@ $(function(){
         $("#registerSubmit").on('click',function(){ register(); });
         $("#gotoRegister").on('click',function(){ go_register(); });
         $("#gotoLogin").on('click',function(){ go_login(); });
+        $("#profileEdit").on('click',function(){ 
+              $("#profileInfoViewing").hide();
+              $("#profileInfoEditing").show();
+              console.log("edit profile");
+        });
+        $("#profileSave").on('click',function(){ 
+                $("#profileInfoViewing").show();
+                $("#profileInfoEditing").hide();
+                console.log("edit profile");
+        });
         
         //Nav
         $("#playNav").on('click',function(){ play(); });
