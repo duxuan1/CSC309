@@ -147,17 +147,6 @@
 							<b id="profilePlaytime"></b>
 						</td>
 					</tr>
-
-					<!-- <tr>
-						<th><label for="createPassword">Passowrd</label></th>
-						<td><input type="password" id="createPassword" placeholder="Password" /></td>
-						<td><b id="passwordErr"></b></td>
-					</tr>
-
-					<tr><th><label for="confirmPassword">Confirm Password</label></th>
-						<td><input type="password" id="confirmPassword" placeholder="Confirm password" /></td>
-						<td><b id="confirmPassErr"></b></td>
-					</tr> -->
 					</table>
 					<button class="profilebtn" id="profileEdit">Edit profile</button>	
 				</div>
@@ -169,16 +158,6 @@
 							<td><input type="text" id="changeUserName" placeholder="User Name"/></td>
 						</tr>
 
-						<tr>
-							<th><label for="newPassword">New Passowrd:</label></th>
-							<td><input type="password" id="newPassword" placeholder="Password" /></td>
-						</tr>
-
-						<tr>
-							<th><label for="confirmNewPassword">Confirm New Password:</label></th>
-							<td><input type="password" id="confirmNewPassword" placeholder="Confirm new password" /></td>
-						</tr>
-
 						<tr><th><label for="birthday">Birthday</label></th>
 							<td> 
 								<input type="date" id="newBirthday" name="birthday" >
@@ -187,24 +166,63 @@
 
 						<tr><th><label for="skill">New Skill Level:</label></th>
 							<td> 
-								<input type="radio" id="profileBeginner" name="pskill" value="beginner" > <label for="beginner">beginner</label>
-								<input type="radio" id="profileIntermidiate" name="pskill" value="intermidiate"> <label for="intermidiate">intermidiate</label>
-								<input type="radio" id="profileAdvanced" name="pskill" value="advanced"> <label for="advanced">advanced</label>
+								<input type="radio" id="profilebeginner" name="pskill" value="beginner" > <label for="beginner">beginner</label>
+								<input type="radio" id="profileintermidiate" name="pskill" value="intermidiate"> <label for="intermidiate">intermidiate</label>
+								<input type="radio" id="profileadvanced" name="pskill" value="advanced"> <label for="advanced">advanced</label>
 							</td>
 						</tr>
 
 						<tr><th><label for="playtime">I plan to play:</label></th>
 							<td>
-							<input type="checkbox" id="pmorningbox" name="playtimebox" value="morning">
+							<input type="checkbox" class="profileSettingplaytime" id="pmorningbox" name="playtimebox" value="morning">
 							<label for="morningbox">morning</label>
-							<input type="checkbox" id="pafternoonbox" name="playtimebox" value="afternoon">
+							<input type="checkbox" class="profileSettingplaytime" id="pafternoonbox" name="playtimebox" value="afternoon">
 							<label for="afternoonbox">afternoon</label>
-							<input type="checkbox" id="peveningbox" name="playtimebox" value="evening">
+							<input type="checkbox" class="profileSettingplaytime" id="peveningbox" name="playtimebox" value="evening">
 							<label for="eveningbox">evening</label>
 							</td>
 						</tr>
+
+						<tr>
+							<th>&nbsp;</th>
+						</tr>
+
+						<tr>
+							<th><label for="newPassword"><ins>Change Password</ins></label></th>
+						</tr>
+
+						<tr>
+							<th><label for="newPassword">Original Passowrd:</label></th>
+							<td><input type="password" id="originalPassword" placeholder="Original Password" /></td>
+							
+						</tr>
+
+						<tr>
+							<th><label for="newPassword">New Passowrd:</label></th>
+							<td><input type="password" id="newPassword" placeholder="New Password" /></td>
+						</tr>
+
+						<tr>
+							<th><label for="confirmNewPassword">Confirm New Password:</label></th>
+							<td><input type="password" id="confirmNewPassword" placeholder="Confirm new password" /></td>
+							
+						</tr>
+
+						<tr>
+							<th>&nbsp;</th>
+							<td><b id="editingStatus"></b></td>
+						</tr>
+
+						
 					</table>
-					<button class="profilebtn" id="profileSave">Save</button>
+					<div>
+						<button class="profilebtn" id="profileCancel">Cancel</button>
+						<button class="profilebtn" id="profileSave">Save</button>
+						<div class="deletebtnSet">
+							<button class="profilebtn" id="profileDelete">Delete Account</button>
+							<button class="profilebtn" id="confirmDelete">Confirm Deletion</button>
+						</div>
+					</div>
 				</div>
 			</div>
 				
