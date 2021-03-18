@@ -74,6 +74,11 @@ nav {
 	border-radius: 10px;
 	cursor: pointer;
 	padding: 5px;
+	margin-left: 10px;
+}
+
+.deletebtnSet{
+	float:left;
 }
 
 #profileInfoEditing{

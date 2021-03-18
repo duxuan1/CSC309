@@ -3,6 +3,7 @@ var view = null;
 var interval=null;
 var credentials={ "username": "", "password":"" };
 const USER_EXIST = 23505;
+const TIMEOUT = 2300;
 function setupGame(){
 	stage=new Stage(document.getElementById('stage'));
 
@@ -94,7 +95,7 @@ function moveByMouse(event){
 
 function login(){
 	credentials =  { 
-		"username": $("#username").val(), 
+		"username": $("#username").val().trim(), 
 		"password": $("#password").val() 
 	};
 
@@ -102,7 +103,7 @@ function login(){
                 $("#username").focus();
                 $("#loginuserNameErr").show();
                 $("#loginuserNameErr").text("User name is required");
-                $("#loginuserNameErr").fadeOut(3000);
+                $("#loginuserNameErr").fadeOut(TIMEOUT);
                 return;
         }
 
@@ -110,7 +111,7 @@ function login(){
                 $("#password").focus();
                 $("#loginPassErr").show();
                 $("#loginPassErr").text("Password is required");
-                $("#loginPassErr").fadeOut(3000);
+                $("#loginPassErr").fadeOut(TIMEOUT);
                 return;
         }
 
@@ -125,12 +126,6 @@ function login(){
         }).done(function(data, text_status, jqXHR){
                 console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
 
-        	// $("#ui_login").hide();
-                // $("#ui_register").hide();
-        	// $("#ui_play").show();
-
-		// setupGame();
-		// startGame();
                 $("#username").val("");
                 $("#password").val("");
                 setupGame();
@@ -142,21 +137,21 @@ function login(){
                 $("#loginuserNameErr").show();
                 $("#loginuserNameErr").text("User name or password is incorrect");
                 $("#password").val("");
-                $("#loginuserNameErr").fadeOut(2000);
+                $("#loginuserNameErr").fadeOut(TIMEOUT);
         });
 }
 
 function register(){
 	credentials =  { 
-		"username": $("#createUser").val(), 
-		"password": $("#createPassword").val() 
+		"username": $("#createUser").val().trim(), 
+		"password": $("#createPassword").val()
 	};
 
         if(credentials.username==""){
                 $("#createUser").focus();
                 $("#userNameErr").show();
-                $("#userNameErr").text("User name is required");
-                $("#userNameErr").fadeOut(3000);
+                $("#userNameErr").text("User name is required or can not be space only");
+                $("#userNameErr").fadeOut(TIMEOUT);
                 return;
         }
         
@@ -164,7 +159,7 @@ function register(){
                 $("#createPassword").focus();
                 $("#passwordErr").show();
                 $("#passwordErr").text("Password is required");
-                $("#passwordErr").fadeOut(3000);
+                $("#passwordErr").fadeOut(TIMEOUT);
                 return;
         }
 
@@ -172,7 +167,7 @@ function register(){
                 $("#confirmPassword").focus();
                 $("#confirmPassErr").show();
                 $("#confirmPassErr").text("Please enter your password again");
-                $("#confirmPassErr").fadeOut(3000);
+                $("#confirmPassErr").fadeOut(TIMEOUT);
                 return;
         }
 
@@ -181,7 +176,7 @@ function register(){
                 $("#confirmPassErr").show();
                 $("#confirmPassErr").text("The passwords do not match");
                 $("#confirmPassword").val("");
-                $("#confirmPassErr").fadeOut(3000);
+                $("#confirmPassErr").fadeOut(TIMEOUT);
                 return;
         }
 
@@ -189,14 +184,15 @@ function register(){
                 $("#birthday").focus();
                 $("#birthdayErr").show();
                 $("#birthdayErr").text("Birthday is required");
-                $("#birthdayErr").fadeOut(3000);
+                $("#birthdayErr").fadeOut(TIMEOUT);
                 return;
         }
 
         if($("input[type='radio'][name='skill']:checked").val()==null){
                 $("#birthdayErr").show();
                 $("#birthdayErr").text("Please tell us your skill level:)");
-                $("#birthdayErr").fadeOut(3000);
+                $("#birthdayErr").fadeOut(TIMEOUT);
+                return;
         }
 
         var times = [];
@@ -217,10 +213,11 @@ function register(){
         }).done(function(data, text_status, jqXHR){
                 console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
 
-
+                $("#registatus").show();
                 $("#registatus").text("Registration completed! Coming back to Login page");
-                $("#registatus").fadeOut(2000, function(){
+                $("#registatus").fadeOut(TIMEOUT, function(){
                         displayUI("#ui_login");
+                        clearRegisterForm();
                 })
 
 
@@ -230,7 +227,7 @@ function register(){
                         $("#createUser").focus();
                         $("#userNameErr").show();
                         $("#userNameErr").text("User name alredy exist");
-                        $("#userNameErr").fadeOut(3000);
+                        $("#userNameErr").fadeOut(TIMEOUT);
                 }
         });
 }
@@ -310,9 +307,160 @@ function getProfile(){
                 $("#profileGreeting").text("Hi " + data.username + String.fromCodePoint(0x1F609));
                 $("#profileSkill").text(data.skill);
                 $("#profileBirthday").text(data.birthdayre);
-                $("#profilePlaytime").text(data.prefer_time);
-                console.log(data.username);
+                console.log(data.prefer_time);
+
+                if(data.prefer_time.length==0){
+                        $("#profilePlaytime").text("You don't have any preferded time");    
+                }else{
+                        $("#profilePlaytime").text(data.prefer_time);
+                }
+
+                $("#profileInfoViewing").show();
+                $("#profileInfoEditing").hide();
+
                 displayUI("#ui_profile");
+
+        }).fail(function(err){
+                console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
+        });
+}
+
+function prefillProfileSetting(){
+        $.ajax({
+                method: "GET",
+                url: "/api/auth/profile/" + credentials.username,
+                data: JSON.stringify({}),
+		headers: { "Authorization": "Basic " + btoa(credentials.username + ":" + credentials.password) },
+                processData:false,
+                contentType: "application/json; charset=utf-8",
+                dataType:"json"
+        }).done(function(data, text_status, jqXHR){
+                console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
+
+                $("#changeUserName").val(data.username);
+                $("#newBirthday").val(data.birthdayre);
+                $("#profile" + data.skill).prop('checked', true);
+                $(".profileSettingplaytime").each(function(){
+                        $(this).prop('checked', false);
+                })
+                data.prefer_time.forEach(function(time){
+                        $("#p" + time + "box").prop('checked', true);
+                });
+
+        }).fail(function(err){
+                console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
+        });
+}
+
+function updateProfile(){
+
+        var username = $("#changeUserName").val().trim();
+
+        if(username==""){
+                $("#changeUserName").focus();
+                $("#editingStatus").show();
+                $("#editingStatus").text("User name is required or can not be space only");
+                $("#editingStatus").fadeOut(TIMEOUT);
+                return;
+        }
+
+        var times = [];
+        $("input[type='checkbox'][class='profileSettingplaytime']:checked").each(function(){
+                times.push(this.value);
+        });
+
+        var originalPass = $("#originalPassword").val();
+        var newPass = $("#newPassword").val();
+        var confirmNewPass = $("#confirmNewPassword").val();
+        var changePass;
+
+        if(originalPass!="" && newPass!="" && confirmNewPass!=""){
+                if(originalPass!=credentials.password){
+                        $("#originalPassword").focus();
+                        $("#editingStatus").show();
+                        $("#editingStatus").text("Password incorrect");
+                        $("#editingStatus").fadeOut(TIMEOUT);
+                        return;
+                }
+
+                if(newPass!=confirmNewPass){
+                        $("#confirmNewPassword").focus();
+                        $("#editingStatus").show();
+                        $("#editingStatus").text("The passwords do not match");
+                        $("#confirmNewPassword").val("");
+                        $("#editingStatus").fadeOut(TIMEOUT);
+                        return;
+                }
+                changePass = true;
+                var payload = JSON.stringify({"birthday":$("#newBirthday").val(), 
+                        "skill":$("input[type='radio'][name='pskill']:checked").val(),
+                        "prefer_time":times,
+                        "originalUsername":credentials.username,
+                        "newUsername":username,
+                        "newpassword":newPass,
+                        "changePass":changePass
+                });
+        }else{
+                changePass = false;
+                var payload = JSON.stringify({"birthday":$("#newBirthday").val(), 
+                        "skill":$("input[type='radio'][name='pskill']:checked").val(),
+                        "prefer_time":times,
+                        "originalUsername":credentials.username,
+                        "newUsername":username,
+                        "changePass":changePass
+                });
+        }
+
+        $.ajax({
+                method: "PUT",
+                url: "/api/auth/profile/" + credentials.username,
+                data: payload,
+		headers: { "Authorization": "Basic " + btoa(credentials.username + ":" + credentials.password) },
+                processData:false,
+                contentType: "application/json; charset=utf-8",
+                dataType:"json"
+        }).done(function(data, text_status, jqXHR){
+                console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
+                $("#originalPassword").val("");
+                $("#newPassword").val("");
+                $("#confirmNewPassword").val("");
+
+                credentials.username = username;
+                if(changePass){
+                        credentials.password = newPass;
+                }
+                getProfile();
+
+        }).fail(function(err){
+                console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
+                if(err.responseJSON.error.code==USER_EXIST){
+                        $("#changeUserName").focus();
+                        $("#editingStatus").show();
+                        $("#editingStatus").text("User name alredy exist");
+                        $("#editingStatus").fadeOut(TIMEOUT);
+                }
+        });
+}
+
+function deleteProfile(){
+        $.ajax({
+                method: "DELETE",
+                url: "/api/auth/profile/" + credentials.username,
+                data: JSON.stringify({}),
+		headers: { "Authorization": "Basic " + btoa(credentials.username + ":" + credentials.password) },
+                processData:false,
+                contentType: "application/json; charset=utf-8",
+                dataType:"json"
+        }).done(function(data, text_status, jqXHR){
+                console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
+
+                $("#editingStatus").show();
+                $("#editingStatus").text("Account deleted!");
+                $("#editingStatus").fadeOut(TIMEOUT, function(){
+                        credentials={ "username": "", "password":"" };
+        	        displayUI("#ui_login");
+                        endGame();
+                });
 
         }).fail(function(err){
                 console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
@@ -377,6 +525,17 @@ function go_login(){
         });
 }
 
+function clearRegisterForm(){
+        $("#createUser").val("");
+        $("#createPassword").val("");
+        $("#confirmPassword").val("");
+        $("#birthday").val("");
+        $("input[type='radio'][name='skill']:checked").prop('checked', false);
+        $("input[type='checkbox'][name='playtimebox']:checked").each(function(){
+                $(this).prop('checked', false);
+        });
+}
+
 // Using the /api/auth/test route, must send authorization header
 function test(){
         $.ajax({
@@ -415,22 +574,41 @@ function displayUI(ui){
         }
 }
 
+function displayConfirm(indication){
+        if(indication){
+                $("#confirmDelete").show();
+                $("#profileDelete").hide(); 
+        }else{
+                $("#confirmDelete").hide();
+                $("#profileDelete").show();
+        }
+}
+
 $(function(){
         // Setup all events here and display the appropriate UI
         $("#loginSubmit").on('click',function(){ login(); });
         $("#registerSubmit").on('click',function(){ register(); });
         $("#gotoRegister").on('click',function(){ go_register(); });
         $("#gotoLogin").on('click',function(){ go_login(); });
-        $("#profileEdit").on('click',function(){ 
-              $("#profileInfoViewing").hide();
-              $("#profileInfoEditing").show();
-              console.log("edit profile");
+        $("#profileEdit").on('click',function(){
+                $("#profileInfoViewing").hide();
+                $("#profileInfoEditing").show();
+                displayConfirm(false);
+                prefillProfileSetting();
         });
-        $("#profileSave").on('click',function(){ 
+        $("#profileSave").on('click',function(){
+                displayConfirm(false);
+                updateProfile();
+        });
+        $("#profileCancel").on('click',function(){ 
                 $("#profileInfoViewing").show();
                 $("#profileInfoEditing").hide();
-                console.log("edit profile");
+                displayConfirm(false);
         });
+        $("#profileDelete").on('click',function(){
+                displayConfirm(true);
+        });
+        $("#confirmDelete").on('click',function(){ deleteProfile(); });
         
         //Nav
         $("#playNav").on('click',function(){ play(); });
