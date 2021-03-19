@@ -21,27 +21,19 @@ class Stage {
 		this.ammobags = [];
 		this.state = 0; // 0: in prohree, -1: loss, 1: win
 		this.difficulty = 0; // 0: easy, 1: medium, 2: hard
+		this.normalEnemyNum = 1;
+		this.smartEnemyNum = 1;
+		this.fuckingSmartEnemyNum = 1;
+		this.obstacleNum = 1;
+		this.ammobagNum = 1;
+		this.playerHealthMul = 1;
+		this.enemyHealthMul = 1;
+		this.DMGMul = 1;
+
 
 		// the logical width and height of the stage
 		this.width=canvas.width;
 		this.height=canvas.height;
-
-		// Add the player to the center of the stage
-		var velocity = new Pair(0,0);
-		var radius = 15;
-		var colour= 'rgba(0,0,0,1)';
-		var position = new Pair(Math.floor(this.width/2), Math.floor(this.height/2));
-		this.addPlayer(new Player(this, position, velocity, colour, radius));
-	
-		// Add enemies
-		this.addEnemies(5);
-		// Add obstacles
-		this.addObstacles(5);
-		// Add ammobags
-		this.addAmmoBags(3);
-		// Add smart Enemy
-		this.addSmartEnemies(2);
-		this.addFuckingSmartEnemies(2);
 	}
 
 	addPlayer(player){
@@ -248,6 +240,40 @@ class Stage {
 			}
 		}
 		return null;
+	}
+
+	loadCurrentSetting(){
+		// Add the player to the center of the stage
+		var velocity = new Pair(0,0);
+		var radius = 15;
+		var colour= 'rgba(0,0,0,1)';
+		var position = new Pair(Math.floor(this.width/2), Math.floor(this.height/2));
+		this.addPlayer(new Player(this, position, velocity, colour, radius));
+	
+		// Add enemies
+		this.addEnemies(this.normalEnemyNum);
+		// Add obstacles
+		this.addObstacles(this.obstacleNum);
+		// Add ammobags
+		this.addAmmoBags(this.ammobagNum);
+		// Add smart Enemy
+		this.addSmartEnemies(this.smartEnemyNum);
+		this.addFuckingSmartEnemies(this.fuckingSmartEnemyNum);
+
+		this.state = 0;
+	}
+
+	setgameParamter(parameter){
+		this.normalEnemyNum = parameter["numNormal"];
+		this.smartEnemyNum = parameter["numSmart"];
+		this.fuckingSmartEnemyNum = parameter["numSmarter"];
+		this.obstacleNum = parameter["numObstacle"];
+		this.ammobagNum = parameter["numAmmobag"];
+		this.playerHealthMul = parameter["playerHealthMul"];
+		this.enemyHealthMul = parameter["enemyHealthMul"];
+		this.DMGMul = parameter["DMGMul"];
+		this.difficulty = parameter["difficulty"];
+		this.loadCurrentSetting();
 	}
 } // End Class Stage
 

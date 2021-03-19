@@ -94,6 +94,44 @@ nav {
 	font-size: 18px;
 }
 
+#gsettingTitle{
+	font-size: 30px;
+}
+
+#settings{
+	display: flex;
+	justify-content: space-around;
+	flex-wrap: wrap;
+}
+
+#settings div{
+	width: 40%;
+}
+
+.settingCategory{
+	font-size: 20px;
+}
+
+#startGame{
+	margin: auto;
+	color: white;
+	background-color: #12175e;
+	font-size: 25px;
+	border-radius: 10px;
+	cursor: pointer;
+	padding: 5px;
+}
+
+.restartmenu{
+	margin: auto;
+	color: white;
+	background-color: #12175e;
+	font-size: 20px;
+	border-radius: 10px;
+	cursor: pointer;
+	padding: 5px;
+}
+
 @media only screen and (min-width: 768px) {
 	ul {
 		display: flex;

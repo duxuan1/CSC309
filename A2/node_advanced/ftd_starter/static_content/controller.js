@@ -4,15 +4,9 @@ var interval=null;
 var credentials={ "username": "", "password":"" };
 const USER_EXIST = 23505;
 const TIMEOUT = 2300;
-$('html,body').css('cursor','crosshair');
+//$('html,body').css('cursor','crosshair');
 function setupGame(){
-	stage=new Stage(document.getElementById('stage'));
-
-	// https://javascript.info/keyboard-events
-	document.addEventListener('keydown', moveByKey);
-        document.addEventListener('keyup', stopByKey);
-        document.addEventListener('mousemove', moveByMouse);
-        document.addEventListener('mouseup', clickByMouse);
+        stage=new Stage(document.getElementById('stage'));
 }
 
 // function startGame(){
@@ -26,6 +20,7 @@ function startGame(){
                 if (stage.getState() == -1 || stage.getState() == 1) {
                         pauseGame();
                         console.log("game finish");
+                        //$("#restartbtns").show();
                         saveGameRecord(stage);
                 }},
         100);
@@ -39,6 +34,11 @@ function pauseGame(){
 function endGame() {
 	clearInterval(interval);
 	interval = null;
+}
+
+function restartGame(){
+        setupGame();
+        initializeGame(stage);
 }
 
 function moveByKey(event){
@@ -98,6 +98,94 @@ function moveByMouse(event){
         }
 }
 
+function initializeGame(stage){
+        console.log("set game");
+        var numNormal = $("#enemyNumSlider").val();
+        var numSmart = $("#smartEnemyNumSlider").val();
+        var numSmarter = $("#evenSmarterEnemyNumSlider").val();
+        var numObstacle = $("#obstacleNumSlider").val();
+        var numAmmobag= $("#ammoBagNumSlider").val();
+        var playerHealthMul = $("#playerHealthMulSlider").val();
+        var enemyHealthMul = $("#enemyHealthMulSlider").val();
+        var DMGMul = $("#bulletDMGMulSlider").val();
+        var difficulty = $("input[type='radio'][name='gset']:checked").val();
+
+        var gameSetting = {
+                "numNormal":numNormal,
+                "numSmart":numSmart,
+                "numSmarter":numSmarter,
+                "numObstacle":numObstacle,
+                "numAmmobag":numAmmobag,
+                "playerHealthMul":playerHealthMul,
+                "enemyHealthMul":enemyHealthMul,
+                "DMGMul":DMGMul,
+                "difficulty":difficulty
+        }
+        stage.setgameParamter(gameSetting);
+        // https://javascript.info/keyboard-events
+	document.addEventListener('keydown', moveByKey);
+        document.addEventListener('keyup', stopByKey);
+        document.addEventListener('mousemove', moveByMouse);
+        document.addEventListener('mouseup', clickByMouse);
+        play();
+        //num of ememy, bullet dmage, playler health, num of obstacle
+}
+
+function presetGameSetting(){
+        $("#gameEasy").on('click', function(){
+                $("#enemyNumSlider").val(3);
+                $("#smartEnemyNumSlider").val(2);
+                $("#evenSmarterEnemyNumSlider").val(1);
+                $("#obstacleNumSlider").val(5);
+                $("#ammoBagNumSlider").val(6);
+                $("#playerHealthMulSlider").val(2);
+                $("#enemyHealthMulSlider").val(0.5);
+                $("#bulletDMGMulSlider").val(2);
+                $(".slider").each(function(){
+                        var Sldid = $(this).attr('id').split("Slider")[0];
+                        $("#" + Sldid).text($(this).val());
+                        $("#" + Sldid).text($(this).val());
+                        
+                });
+        });
+
+        $("#gameNormal").on('click', function(){
+                $("#enemyNumSlider").val(5);
+                $("#smartEnemyNumSlider").val(3);
+                $("#evenSmarterEnemyNumSlider").val(3);
+                $("#obstacleNumSlider").val(7);
+                $("#ammoBagNumSlider").val(5);
+                $("#playerHealthMulSlider").val(1);
+                $("#enemyHealthMulSlider").val(1);
+                $("#bulletDMGMulSlider").val(1);
+                $(".slider").each(function(){
+                        var Sldid = $(this).attr('id').split("Slider")[0];
+                        $("#" + Sldid).text($(this).val());
+                        $("#" + Sldid).text($(this).val());
+                        
+                });
+        });
+
+        $("#gameHard").on('click', function(){
+                $("#enemyNumSlider").val(5);
+                $("#smartEnemyNumSlider").val(5);
+                $("#evenSmarterEnemyNumSlider").val(5);
+                $("#obstacleNumSlider").val(7);
+                $("#ammoBagNumSlider").val(4);
+                $("#playerHealthMulSlider").val(0.5);
+                $("#enemyHealthMulSlider").val(2);
+                $("#bulletDMGMulSlider").val(1);
+                $(".slider").each(function(){
+                        var Sldid = $(this).attr('id').split("Slider")[0];
+                        $("#" + Sldid).text($(this).val());
+                        $("#" + Sldid).text($(this).val());
+                        
+                });
+        });
+        $("#gameNormal").prop('checked', true);
+        //$("#restartbtns").hide();
+}
+
 function saveGameRecord(stage){
         
 }
@@ -137,8 +225,12 @@ function login(){
 
                 $("#username").val("");
                 $("#password").val("");
+                $("#gameMain").hide();
+                $("#gameSetting").show();
+                displayUI("#ui_play");
                 setupGame();
-                play();
+                //initializeGame();
+                //play();
 
         }).fail(function(err){
                 console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
@@ -252,7 +344,8 @@ function play(){
                 dataType:"json"
         }).done(function(data, text_status, jqXHR){
                 console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
-
+                $("#gameMain").show();
+                $("#gameSetting").hide();
                 displayUI("#ui_play");
 		startGame();
 
@@ -595,10 +688,14 @@ function displayConfirm(indication){
 
 $(function(){
         // Setup all events here and display the appropriate UI
+
+        //Login and register
         $("#loginSubmit").on('click',function(){ login(); });
         $("#registerSubmit").on('click',function(){ register(); });
         $("#gotoRegister").on('click',function(){ go_register(); });
         $("#gotoLogin").on('click',function(){ go_login(); });
+
+        //Profile
         $("#profileEdit").on('click',function(){
                 $("#profileInfoViewing").hide();
                 $("#profileInfoEditing").show();
@@ -625,6 +722,26 @@ $(function(){
         $("#statsNav").on('click',function(){ getStats(); });
         $("#profileNav").on('click',function(){ getProfile(); });
         $("#logoutNav").on('click',function(){ logout(); });
+
+        //Game setting
+        presetGameSetting();
+        $(".slider").each(function(){
+                var Sldid = $(this).attr('id').split("Slider")[0];
+                $("#" + Sldid).text($(this).val());
+                $(this).on('input', function(){
+                        $("#" + Sldid).text($(this).val());
+                });
+        });
+        $("#startGame").on('click', function(){ initializeGame(stage) });
+
+        //Game restart
+        $("#restart").on('click', function(){ restartGame();});
+        $("#restartNew").on('click', function(){
+                $("#gameMain").hide();
+                $("#gameSetting").show();
+                endGame();
+                setupGame();
+        });
         
         displayUI("#ui_login");
 });
