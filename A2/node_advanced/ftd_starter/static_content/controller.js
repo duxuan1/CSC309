@@ -566,9 +566,9 @@ function displayUI(ui){
                 $("#navigation").show();
                 var selectedNavbtn = "#" + ui.split("_")[1] + "Nav";
                 $('button[class="navbtn"]').not(selectedNavbtn).each(function(){
-                        $(this).css({"background-color": "black", "color":"white"});
+                        $(this).css({"background-color": "#12175e", "color":"white"});
                 })
-                $(selectedNavbtn).css({"background-color": "white", "color":"black"});
+                $(selectedNavbtn).css({"background-color": "white", "color":"#12175e"});
         }else{
                 $("#navigation").hide();
         }
