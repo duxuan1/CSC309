@@ -96,7 +96,7 @@ class Stage {
 			var y=Math.floor((Math.random()*this.height)); 
 			var radius = 10;
 			var check_position = this.check_position_taken(x, y, radius);
-			while (check_position == 1) {
+			while (check_position == 1 || x <=75 || y <= 100) {
 				x=Math.floor((Math.random()*this.width)); 
 				y=Math.floor((Math.random()*this.height)); 
 				check_position = this.check_position_taken(x, y, radius);
@@ -117,7 +117,7 @@ class Stage {
 			var y=Math.floor((Math.random()*this.height)); 
 			var radius = 10;
 			var check_position = this.check_position_taken(x, y, radius);
-			while (check_position == 1) {
+			while (check_position == 1 || x <=75 || y <= 100) {
 				x=Math.floor((Math.random()*this.width)); 
 				y=Math.floor((Math.random()*this.height)); 
 				check_position = this.check_position_taken(x, y, radius);
@@ -138,7 +138,7 @@ class Stage {
 			var y=Math.floor((Math.random()*this.height)); 
 			var radius = 10;
 			var check_position = this.check_position_taken(x, y, radius);
-			while (check_position == 1) {
+			while (check_position == 1 || x <=75 || y <= 100) {
 				x=Math.floor((Math.random()*this.width)); 
 				y=Math.floor((Math.random()*this.height)); 
 				check_position = this.check_position_taken(x, y, radius);
@@ -159,7 +159,7 @@ class Stage {
 			var y=Math.floor((Math.random()*this.height)); 
 			var radius = 50;
 			var check_position = this.check_position_taken(x, y, radius);
-			while (check_position == 1) {
+			while (check_position == 1 || x <=75 || y <= 100) {
 				x=Math.floor((Math.random()*this.width)); 
 				y=Math.floor((Math.random()*this.height)); 
 				check_position = this.check_position_taken(x, y, radius);
@@ -180,7 +180,7 @@ class Stage {
 			var y=Math.floor((Math.random()*this.height));
 			var radius = 15; 
 			var check_position = this.check_position_taken(x, y, radius);
-			while (check_position == 1) {
+			while (check_position == 1 || x <=75 || y <= 100) {
 				x=Math.floor((Math.random()*this.width)); 
 				y=Math.floor((Math.random()*this.height)); 
 				check_position = this.check_position_taken(x, y, radius);
@@ -250,6 +250,9 @@ class Stage {
 		var position = new Pair(Math.floor(this.width/2), Math.floor(this.height/2));
 		this.addPlayer(new Player(this, position, velocity, colour, radius));
 	
+		this.player.health *= this.playerHealthMul;
+		// this.playerHealthMul.health = Math.round(this.playerHealthMul);
+
 		// Add enemies
 		this.addEnemies(this.normalEnemyNum);
 		// Add obstacles
@@ -390,9 +393,8 @@ class Bullet extends Ball {
 
 	constructor(stage, position, velocity, colour, radius){
 		super(stage, position, velocity, colour, radius);
-		this.damage = 10;
+		this.damage = 10 * this.stage.DMGMul;
 		this.distance = 0;
-
 	}
 
 	killEnemy() {
@@ -455,7 +457,6 @@ class Bullet extends Ball {
 		}
 		this.distance += 1;
 		this.intPosition();
-
 	}
 }
 
@@ -469,16 +470,26 @@ class EnemyBullet extends Bullet {
 		}
 	}
 
-	step() {
+	step() { // enemy bullet will not damage obstacles
 		this.killEnemy();
 		this.hitWall();
 		this.position.x=this.position.x+this.velocity.x;
 		this.position.y=this.position.y+this.velocity.y;
+		if (this.distance > 10) {
+			this.stage.removeActor(this);
+		}
+		this.distance += 1;
 		this.intPosition();
 	}
 }
 
 class Cannonball extends Bullet {
+	constructor(stage, position, velocity, colour, radius){
+		super(stage, position, velocity, colour, radius);
+		this.damage = 30 * this.stage.DMGMul;
+		this.distance = 0;
+	}
+
 	killEnemy() {
 		var i;
 		var enemies_array = this.stage.enemies;
@@ -536,6 +547,7 @@ class Player extends Ball {
 		this.ammunition = 10;
 		this.score = 0;
 		this.weapon = 0; // 0: default weapon, 1: shotgun, 2: cannon
+		this.warning = "";
 	}
 
 	switchWeapon() {
@@ -611,18 +623,29 @@ class Player extends Ball {
 		var HP_text = "HP " + this.health;
 		context.fillText(HP_text, this.x - 1.5 * this.radius, this.y + this.radius * 2);
 
+		var weapon_text;
+		if (this.weapon == 0) {
+			weapon_text = "pistol " + this.ammunition;
+		} else if (this.weapon == 1) {
+			weapon_text = "shotgun " + this.ammunition;
+		} else {
+			weapon_text = "cannon " + this.ammunition;
+		}
+		context.fillText(weapon_text, this.x - 2 * this.radius, this.y + this.radius * 3);
+		
 		context.font = 'normal bold 1em courier';
-		var Ammunition = "Ammo "  + this.ammunition;
-		context.fillText(Ammunition, 0, 25);
+
 		var Score = "Score "  + this.score;
-		context.fillText(Score, 0, 50);
+		context.fillText(Score, 0, 25);
+		var enemycount = "Enemy Left "  + this.stage.enemies.length;
+		context.fillText(enemycount, 0, 50);
 	}
 }
 
 class Enemy extends Ball {
 	constructor(stage, position, velocity, colour, radius){
 		super(stage, position, velocity, colour, radius);
-		this.health = 10;
+		this.health = 10 * this.stage.enemyHealthMul;
 		this.timer = randint(25);
 	}
 
@@ -732,5 +755,3 @@ class FuckingSmartEnemy extends SmartEnemy {
 		this.intPosition();
 	}
 }
-
-
