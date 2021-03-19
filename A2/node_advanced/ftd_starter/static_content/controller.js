@@ -4,6 +4,7 @@ var interval=null;
 var credentials={ "username": "", "password":"" };
 const USER_EXIST = 23505;
 const TIMEOUT = 2300;
+$('html,body').css('cursor','crosshair');
 function setupGame(){
 	stage=new Stage(document.getElementById('stage'));
 
@@ -50,6 +51,9 @@ function moveByKey(event){
 	if(key in moveMap){
 		stage.player.velocity=moveMap[key];
 	}
+        if (key == 'r') {
+                stage.player.switchWeapon(); 
+        }
 }
 
 function stopByKey(event) {

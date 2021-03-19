@@ -19,8 +19,8 @@ class Stage {
 		this.enemies = [];
 		this.obstacles = [];
 		this.ammobags = [];
-		this.bigweapons = [];
 		this.state = 0; // 0: in prohree, -1: loss, 1: win
+		this.difficulty = 0; // 0: easy, 1: medium, 2: hard
 
 		// the logical width and height of the stage
 		this.width=canvas.width;
@@ -34,13 +34,14 @@ class Stage {
 		this.addPlayer(new Player(this, position, velocity, colour, radius));
 	
 		// Add enemies
-		this.addEnemies(10);
+		this.addEnemies(5);
 		// Add obstacles
-		this.addObstacles(3);
+		this.addObstacles(5);
 		// Add ammobags
-		this.addAmmoBags(2);
-		// add big weapons
-		this.addBigWeapons(1);
+		this.addAmmoBags(3);
+		// Add smart Enemy
+		this.addSmartEnemies(2);
+		this.addFuckingSmartEnemies(2);
 	}
 
 	addPlayer(player){
@@ -78,13 +79,6 @@ class Stage {
 		}	
 	}
 
-	remove_from_bigweapons(actor) {
-		var index=this.bigweapons.indexOf(actor);
-		if(index!=-1){
-			this.bigweapons.splice(index,1);
-		}	
-	}
-
 	removeActor(actor){
 		var index=this.actors.indexOf(actor);
 		if(index!=-1){
@@ -92,17 +86,75 @@ class Stage {
 		}
 	}
 
+	check_position_taken(x, y, radius) {
+		var i;
+		for (i = 0; i < this.actors.length; i++) {
+			var actor = this.actors[i]
+			if (circle_interaction(x, y, radius, actor.x, actor.y, actor.radius)) {
+				return 1;
+			}
+		}
+		return 0;
+	}
+
 	addEnemies(number) {
 		var i;
 		for (i = 0; i < number; i++) {
 			var x=Math.floor((Math.random()*this.width)); 
 			var y=Math.floor((Math.random()*this.height)); 
-			var velocity = new Pair(rand(5), rand(5));
 			var radius = 10;
+			var check_position = this.check_position_taken(x, y, radius);
+			while (check_position == 1) {
+				x=Math.floor((Math.random()*this.width)); 
+				y=Math.floor((Math.random()*this.height)); 
+				check_position = this.check_position_taken(x, y, radius);
+			}
+			var velocity = new Pair(rand(5), rand(5));
 			var colour= 'rgba(225,0,0,1)';
 			var position = new Pair(x,y);
 			var enemy = new Enemy(this, position, velocity, colour, radius);
+			this.addActor(enemy);
+			this.enemies.push(enemy);
+		}
+	}
 
+	addSmartEnemies(number) {
+		var i;
+		for (i = 0; i < number; i++) {
+			var x=Math.floor((Math.random()*this.width)); 
+			var y=Math.floor((Math.random()*this.height)); 
+			var radius = 10;
+			var check_position = this.check_position_taken(x, y, radius);
+			while (check_position == 1) {
+				x=Math.floor((Math.random()*this.width)); 
+				y=Math.floor((Math.random()*this.height)); 
+				check_position = this.check_position_taken(x, y, radius);
+			}
+			var velocity = new Pair(rand(5), rand(5));
+			var colour= 'rgba(225,225,0,1)';
+			var position = new Pair(x,y);
+			var enemy = new SmartEnemy(this, position, velocity, colour, radius);
+			this.addActor(enemy);
+			this.enemies.push(enemy);
+		}
+	}
+
+	addFuckingSmartEnemies(number) {
+		var i;
+		for (i = 0; i < number; i++) {
+			var x=Math.floor((Math.random()*this.width)); 
+			var y=Math.floor((Math.random()*this.height)); 
+			var radius = 10;
+			var check_position = this.check_position_taken(x, y, radius);
+			while (check_position == 1) {
+				x=Math.floor((Math.random()*this.width)); 
+				y=Math.floor((Math.random()*this.height)); 
+				check_position = this.check_position_taken(x, y, radius);
+			}
+			var velocity = new Pair(rand(5), rand(5));
+			var colour= 'rgba(0,225,225,1)';
+			var position = new Pair(x,y);
+			var enemy = new FuckingSmartEnemy(this, position, velocity, colour, radius);
 			this.addActor(enemy);
 			this.enemies.push(enemy);
 		}
@@ -113,8 +165,14 @@ class Stage {
 		for (i = 0; i < number; i++) {
 			var x=Math.floor((Math.random()*this.width)); 
 			var y=Math.floor((Math.random()*this.height)); 
-			var velocity = new Pair(0, 0);
 			var radius = 50;
+			var check_position = this.check_position_taken(x, y, radius);
+			while (check_position == 1) {
+				x=Math.floor((Math.random()*this.width)); 
+				y=Math.floor((Math.random()*this.height)); 
+				check_position = this.check_position_taken(x, y, radius);
+			}
+			var velocity = new Pair(0, 0);
 			var colour= 'rgba(225,225,225,1)';
 			var position = new Pair(x,y);
 			var obstacle = new Obstacle(this, position, velocity, colour, radius);
@@ -127,31 +185,21 @@ class Stage {
 		var i;
 		for (i = 0; i < number; i++) {
 			var x=Math.floor((Math.random()*this.width)); 
-			var y=Math.floor((Math.random()*this.height)); 
+			var y=Math.floor((Math.random()*this.height));
+			var radius = 15; 
+			var check_position = this.check_position_taken(x, y, radius);
+			while (check_position == 1) {
+				x=Math.floor((Math.random()*this.width)); 
+				y=Math.floor((Math.random()*this.height)); 
+				check_position = this.check_position_taken(x, y, radius);
+			}
 			var velocity = new Pair(0, 0);
-			var radius = 15;
 			var colour= 'rgba(0,225,0,1)';
 			var position = new Pair(x,y);
 			var ammobag = new AmmoBag(this, position, velocity, colour, radius);
 
 			this.addActor(ammobag);
 			this.ammobags.push(ammobag);
-		}
-	}
-
-	addBigWeapons(number) {
-		var i;
-		for (i = 0; i < number; i++) {
-			var x=Math.floor((Math.random()*this.width)); 
-			var y=Math.floor((Math.random()*this.height)); 
-			var velocity = new Pair(0, 0);
-			var radius = 15;
-			var colour= 'rgba(0,0,225,1)';
-			var position = new Pair(x,y);
-			var bigw = new BigWeapon(this, position, velocity, colour, radius);
-
-			this.addActor(bigw);
-			this.bigweapons.push(bigw);
 		}
 	}
 
@@ -317,6 +365,8 @@ class Bullet extends Ball {
 	constructor(stage, position, velocity, colour, radius){
 		super(stage, position, velocity, colour, radius);
 		this.damage = 10;
+		this.distance = 0;
+
 	}
 
 	killEnemy() {
@@ -374,7 +424,12 @@ class Bullet extends Ball {
 		this.hitWall();
 		this.position.x=this.position.x+this.velocity.x;
 		this.position.y=this.position.y+this.velocity.y;
+		if (this.distance > 10) {
+			this.stage.removeActor(this);
+		}
+		this.distance += 1;
 		this.intPosition();
+
 	}
 }
 
@@ -397,6 +452,41 @@ class EnemyBullet extends Bullet {
 	}
 }
 
+class Cannonball extends Bullet {
+	killEnemy() {
+		var i;
+		var enemies_array = this.stage.enemies;
+		// loop through enemy array to see if bullet hit one enemy
+		for (i = 0; i < enemies_array.length; i++) {
+			var enemy = this.stage.enemies[i];
+			if (circle_interaction(this.x, this.y, this.radius, enemy.x, enemy.y, enemy.radius) == 1) {
+				// destroy enemy and remove it
+				enemy.health -= this.damage;
+				if (enemy.health <= 0) {
+					this.stage.removeActor(enemy);
+					this.stage.remove_from_enemies(enemy);
+				} 		
+				// killed enemy, add score to player
+				this.stage.player.score += 1;
+			}
+		}
+	}
+
+	step() {
+		this.killEnemy();
+		this.hitObstacle();
+		this.hitWall();
+		this.position.x=this.position.x+this.velocity.x;
+		this.position.y=this.position.y+this.velocity.y;
+		if (this.distance > 20) {
+			this.stage.removeActor(this);
+		}
+		this.distance += 1;
+		this.intPosition();
+
+	}
+}
+
 class AmmoBag extends Ball {
 	draw(context){
 		context.fillStyle = this.colour;
@@ -411,20 +501,6 @@ class AmmoBag extends Ball {
 	}
 }
 
-class BigWeapon extends Ball {
-	draw(context){
-		context.fillStyle = this.colour;
-   		// context.fillRect(this.x, this.y, this.radius,this.radius);
-		context.beginPath(); 
-		context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false); 
-		context.fill();   
-
-		context.font = 'normal bold 0.8em courier';
-		var text = "Big Weapon";
-		context.fillText(text, this.x - 2 * this.radius, this.y + this.radius * 1.5);
-	}
-}
-
 class Player extends Ball {
 	constructor(stage, position, velocity, colour, radius){
 		super(stage, position, velocity, colour, radius);
@@ -433,7 +509,12 @@ class Player extends Ball {
 		this.health = 100;
 		this.ammunition = 10;
 		this.score = 0;
-		this.weapon = 0; // 0: default weapon, 1: big weapon
+		this.weapon = 0; // 0: default weapon, 1: shotgun, 2: cannon
+	}
+
+	switchWeapon() {
+		this.weapon += 1;
+		this.weapon %= 3;
 	}
 
 	hitAmmoBag() {
@@ -452,24 +533,6 @@ class Player extends Ball {
 		}	
 	}
 
-	hitBigWeapon() {
-		var i;
-		var big_array = this.stage.bigweapons;
-		// loop through enemy array to see if bullet hit one enemy
-		for (i = 0; i < big_array.length; i++) {
-			var big = big_array[i];
-			if (circle_interaction(this.x, this.y, this.radius, big.x, big.y, big.radius) == 1) {
-				// add ammo to player
-				this.ammunition += 100;
-				// change weapon
-				this.weapon = 1;
-				// remove bag
-				this.stage.remove_from_bigweapons(big);
-				this.stage.removeActor(big);
-			}
-		}		
-	}
-
 	fire() {
 		if (this.ammunition > 0) {
 			var radius = 5;
@@ -482,27 +545,28 @@ class Player extends Ball {
 				var b = new Bullet(stage, position, velocity, colour, radius);
 				this.stage.addActor(b);
 				this.ammunition -= 1;
-			} else if (this.weapon == 1) {
-				var v1 = new Pair(this.mousex, this.mousey);
-				var v2 = new Pair(-this.mousex, -this.mousey);
-				var v3 = new Pair(-this.mousex, this.mousey);
-				var v4 = new Pair(this.mousex, -this.mousey);
-				console.log(v1);
+			} else if (this.weapon == 1 && this.ammunition >= 3) {
+				var v1 = new Pair(this.mousex - 5, this.mousey);
+				var v2 = new Pair(this.mousex , this.mousey);
+				var v3 = new Pair(this.mousex + 5, this.mousey);
 				var b1 = new Bullet(stage, position, v1, colour, radius);
-				var b2 = new Bullet(stage, new Pair(player_position.x - 1, player_position.y - 1), v2, colour, radius);
-				var b3 = new Bullet(stage,new Pair(player_position.x - 1, player_position.y), v3, colour, radius);
-				var b4 = new Bullet(stage, new Pair(player_position.x, player_position.y - 1), v4, colour, radius);
+				var b2 = new Bullet(stage, new Pair(player_position.x - 5, player_position.y + 5), v2, colour, radius);
+				var b3 = new Bullet(stage,new Pair(player_position.x + 5, player_position.y + 5), v3, colour, radius);
 				this.stage.addActor(b1);
 				this.stage.addActor(b2);
 				this.stage.addActor(b3);
-				this.stage.addActor(b4);
-				this.ammunition -= 4;
+				this.ammunition -= 3;
+			} else if (this.weapon == 2 && this.ammunition >= 5) {
+				// create a bullet, display on the stage
+				var velocity = new Pair(this.mousex, this.mousey);
+				var b = new Cannonball(stage, position, velocity, colour, 30);
+				this.stage.addActor(b);
+				this.ammunition -= 5;
 			}
 		}
 	}
 
 	step() {
-		this.hitBigWeapon();
 		this.hitAmmoBag();
 		this.move();
 	}
@@ -512,6 +576,9 @@ class Player extends Ball {
    		// context.fillRect(this.x, this.y, this.radius,this.radius);
 		context.beginPath(); 
 		context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false); 
+		context.fill();   
+		context.beginPath(); 
+		context.arc(this.x + this.mousex / 2, this.y + this.mousey / 2, this.radius / 1.5, 0, 2 * Math.PI, false); 
 		context.fill();   
 
 		context.font = 'normal bold 0.8em courier';
@@ -566,3 +633,78 @@ class Enemy extends Ball {
 		context.fillText(HP_text, this.x - 2 * this.radius, this.y + this.radius * 2);
 	}
 }
+
+class SmartEnemy extends Enemy {
+	fire() {
+		var volx = this.stage.player.x - this.x;
+		var voly = this.stage.player.y - this.y;
+		var divide = Math.max(Math.abs(volx), Math.abs(voly)) / 10;
+		volx = volx / divide;
+		voly = voly / divide;
+		// create a bullet, display on the stage
+		var velocity = new Pair(volx, voly);
+		var radius = 5;
+		var colour= 'rgba(225,225,0,1)';
+		var player_position = this.position;
+		var position = new Pair(player_position.x, player_position.y);
+		var b = new EnemyBullet(stage, position, velocity, colour, radius);
+		this.stage.addActor(b);
+	}
+}
+
+class FuckingSmartEnemy extends SmartEnemy {
+	fire() {
+		var volx = this.stage.player.x - this.x;
+		var voly = this.stage.player.y - this.y;
+		var divide = Math.max(Math.abs(volx), Math.abs(voly)) / 10;
+		volx = volx / divide;
+		voly = voly / divide;
+		// create a bullet, display on the stage
+		var velocity = new Pair(volx, voly);
+		var radius = 5;
+		var colour= 'rgba(0,225,225,1)';
+		var player_position = this.position;
+		var position = new Pair(player_position.x, player_position.y);
+		var b = new EnemyBullet(stage, position, velocity, colour, radius);
+		this.stage.addActor(b);
+	}
+
+	move() {
+		this.hitWall();
+
+		var next_pos = new Pair(this.position.x+this.velocity.x, 
+			this.position.y+this.velocity.y);
+		var i;
+		var obstacles_array = this.stage.obstacles;
+		var check = 0;
+		for (i = 0; i < obstacles_array.length; i++) {
+			var obs = obstacles_array[i];
+			if (circle_interaction(next_pos.x, next_pos.y, this.radius, 
+				obs.x, obs.y, obs.radius) == 1) {
+				check = 1;
+				break;
+			}
+		}
+		if (check != 1) {
+			var volx = this.stage.player.x - this.x;
+			var voly = this.stage.player.y - this.y;
+			var divide = Math.max(Math.abs(volx), Math.abs(voly)) / 5;
+			volx = volx / divide;
+			voly = voly / divide;
+			// create a bullet, display on the stage
+			var velocity = new Pair(volx, voly);
+			this.velocity = velocity;
+			this.position.x=this.position.x+this.velocity.x;
+			this.position.y=this.position.y+this.velocity.y;
+
+		} else {
+			this.position.x=this.position.x-this.velocity.x;
+			this.position.y=this.position.y-this.velocity.y;
+			this.velocity.x = -this.velocity.x;
+			this.velocity.y = -this.velocity.y;	
+		}
+		this.intPosition();
+	}
+}
+
+
