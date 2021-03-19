@@ -25,6 +25,7 @@ function startGame(){
                 if (stage.getState() == -1 || stage.getState() == 1) {
                         pauseGame();
                         console.log("game finish");
+                        saveGameRecord(stage);
                 }},
         100);
 }
@@ -91,6 +92,10 @@ function moveByMouse(event){
                 stage.player.mousex = volx;
                 stage.player.mousey = voly;
         }
+}
+
+function saveGameRecord(stage){
+        
 }
 
 function login(){
