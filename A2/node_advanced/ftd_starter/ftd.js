@@ -85,14 +85,40 @@ app.post('/api/auth/instruction', function (req, res) {
 	res.json({"message":"get instructions"}); 
 });
 
-app.get('/api/auth/stats/:userName', function (req, res) {
-	res.status(200); 
-	res.json({"message":"get to stats"}); 
+app.get('/api/auth/stats', function (req, res) {
+	let sql = "SELECT username, gamescore, difficulty, to_char(endtime, 'yyyy-mm-dd HH24:MI:SS') as endtime FROM ftdgames ORDER BY gamescore DESC";
+	pool.query(sql, [], (err, pgRes) => {
+		if (err) {
+		  res.status(500).json({ error: 'DB error'});
+		} else {
+			res.status(200);
+			res.json(pgRes.rows);
+	  	} 
+  	});
+});
+
+app.post('/api/auth/stats/:userName', function (req, res) {
+	var userName = req.params.userName;
+	var reqdata = req.body;
+	var gamescore = reqdata.gamescore;
+	var difficulty = reqdata.difficulty;
+	var endtime = reqdata.endtime;
+
+	console.log(reqdata);
+
+	let sql = "INSERT INTO ftdgames VALUES($1, $2, $3, $4)";
+	pool.query(sql, [userName, gamescore, difficulty, endtime], (err, pgRes) => {
+		if (err) {
+		  res.status(500).json({ error: 'DB error'});
+		} else {
+			res.status(200);
+			res.json({"message":"Game result saved"}); 
+	  	} 
+  	});
 });
 
 app.get('/api/auth/profile/:userName', function (req, res) {
 	var userName = req.params.userName;
-	console.log(userName);
 	let sql = "SELECT *, to_char(birthday, 'yyyy-mm-dd') as birthdayRe FROM ftduser WHERE username=$1";
 	pool.query(sql, [userName], (err, pgRes) => {
   		if (err) {
@@ -119,53 +145,43 @@ app.delete('/api/auth/profile/:userName', function (req, res) {
 });
 
 app.put('/api/auth/profile/:userName', function (req, res) {
-	if (!req.headers.authorization) {
-		return res.status(403).json({ error: 'No credentials sent!' });
-  	}
-	try {
+	var reqdata = req.body;
+	var birthday = reqdata.birthday;
+	var skill = reqdata.skill;
+	var prefer = reqdata.prefer_time;
+	var newUsername = reqdata.newUsername;
+	var oriUsername = reqdata.originalUsername;
+	var password = "";
+	var sql = "";
 
-		console.log(req.body);
-		var reqdata = req.body;
-		var birthday = reqdata.birthday;
-		var skill = reqdata.skill;
-		var prefer = reqdata.prefer_time;
-		var newUsername = reqdata.newUsername;
-		var oriUsername = reqdata.originalUsername;
-		var password = "";
-		var sql = "";
-
-		if(reqdata.changePass){
-			password = reqdata.newpassword;
-			sql = "UPDATE ftduser SET username=$1, password=sha512($2), birthday=$3, skill=$4, prefer_time=$5 WHERE username=$6";
-			pool.query(sql, [newUsername, password, birthday, skill, prefer, oriUsername], (err) => {
-				if (err){
-					res.status(403).json({ error: err});
-				} else {
-					res.status(200);
-					res.json({"message":"profile update success"});
-				}
-				return;
-			});
-		}else{
-			sql = "UPDATE ftduser SET username=$1, birthday=$2, skill=$3, prefer_time=$4 WHERE username=$5";
-			pool.query(sql, [newUsername, birthday, skill, prefer, oriUsername], (err) => {
-				if (err){
-					res.status(403).json({ error: err});
-				} else {
-					res.status(200);
-					res.json({"message":"profile update success"});
-				}
-				return;
-			});
-		}
-
-		console.log("trying to update profile for" + oriUsername);
-		console.log(sql);
-		console.log("username: " + newUsername + " password: " + password + " birthday: " + birthday + " skill: " + skill + "prefer: " + prefer);
-
-	} catch(err) {
-        res.status(403).json({ error: 'Not authorized'});
+	if(reqdata.changePass){
+		password = reqdata.newpassword;
+		sql = "UPDATE ftduser SET username=$1, password=sha512($2), birthday=$3, skill=$4, prefer_time=$5 WHERE username=$6";
+		pool.query(sql, [newUsername, password, birthday, skill, prefer, oriUsername], (err) => {
+			if (err){
+				res.status(403).json({ error: 'DB error'});
+			} else {
+				res.status(200);
+				res.json({"message":"profile update success"});
+			}
+			return;
+		});
+	}else{
+		sql = "UPDATE ftduser SET username=$1, birthday=$2, skill=$3, prefer_time=$4 WHERE username=$5";
+		pool.query(sql, [newUsername, birthday, skill, prefer, oriUsername], (err) => {
+			if (err){
+				res.status(403).json({ error: 'DB error'});
+			} else {
+				res.status(200);
+				res.json({"message":"profile update success"});
+			}
+			return;
+		});
 	}
+
+	console.log("trying to update profile for" + oriUsername);
+	console.log(sql);
+	console.log("username: " + newUsername + " password: " + password + " birthday: " + birthday + " skill: " + skill + "prefer: " + prefer);
 });
 
 app.post('/api/auth/logout', function (req, res) {
@@ -198,7 +214,7 @@ app.post('/api/register', function (req, res, next) {
 		let sql = "INSERT INTO ftduser VALUES($1, sha512($2), $3, $4, $5)";
         pool.query(sql, [username, password, birthday, skill, prefer], (err) => {
 			if (err){
-                res.status(403).json({ error: err});
+                res.status(403).json({ error: 'DB error'});
 			} else {
 				res.status(200).json({"message":"authentication success"}); 
 			}

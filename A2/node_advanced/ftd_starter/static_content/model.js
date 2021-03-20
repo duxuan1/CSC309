@@ -13,6 +13,7 @@ function circle_interaction(x1, y1, r1, x2, y2, r2) {
 class Stage {
 	constructor(canvas){
 		this.canvas = canvas;
+		this.saved = false;
 	
 		this.actors=[]; // all actors on this stage (monsters, player, boxes, ...)
 		this.player=null; // a special actor, the player
