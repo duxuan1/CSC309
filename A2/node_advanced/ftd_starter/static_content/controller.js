@@ -20,14 +20,14 @@ function startGame(){
                 stage.draw();
                 if (stage.getState() == -1 || stage.getState() == 1) {
                         endGame();
-                        console.log("game finish");
+                        //console.log("game finish");
                         //$("#restartbtns").show();
                         if(!stage.saved){
                                 saveGameRecord();
                                 stage.saved = true;
                         }
                 }},
-        100);
+        50);
 }
 
 function pauseGame(){
@@ -45,6 +45,7 @@ function endGame() {
 }
 
 function restartGame(){
+        endGame();
         setupGame();
         initializeGame();
 }
@@ -395,7 +396,7 @@ function getInstruction(){
                 dataType:"json"
         }).done(function(data, text_status, jqXHR){
                 console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
-                console.log("get to instructions")
+                //console.log("get to instructions")
                 pauseGame();
                 displayUI("#ui_instructions");
 
@@ -421,7 +422,7 @@ function getStats(){
 
                 $(".newLeaders").remove();
 
-                console.log(new Date().toLocaleString("en-US", {timeZone: "America/New_York"}));
+                //console.log(new Date().toLocaleString("en-US", {timeZone: "America/New_York"}));
                 var easyCount = 0;
                 var normalCount = 0;
                 var hardCount = 0;
@@ -467,7 +468,7 @@ function getProfile(){
                 $("#profileGreeting").text("Hi " + data.username + String.fromCodePoint(0x1F609));
                 $("#profileSkill").text(data.skill);
                 $("#profileBirthday").text(data.birthdayre);
-                console.log(data.prefer_time);
+                //console.log(data.prefer_time);
 
                 if(data.prefer_time.length==0){
                         $("#profilePlaytime").text("You don't have any preferded time");    

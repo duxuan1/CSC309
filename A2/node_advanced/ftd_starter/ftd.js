@@ -51,8 +51,8 @@ app.use('/api/auth', function (req, res, next) {
 
 		var username = m[1];
 		var password = m[2];
-		console.log("trying to login");
-		console.log("username: " + username + " password: " + password);
+		//console.log("trying to login");
+		//console.log("username: " + username + " password: " + password);
 
 		let sql = 'SELECT * FROM ftduser WHERE username=$1 and password=sha512($2)';
         pool.query(sql, [username, password], (err, pgRes) => {
@@ -104,7 +104,7 @@ app.post('/api/auth/stats/:userName', function (req, res) {
 	var difficulty = reqdata.difficulty;
 	var endtime = reqdata.endtime;
 
-	console.log(reqdata);
+	//console.log(reqdata);
 
 	let sql = "INSERT INTO ftdgames VALUES($1, $2, $3, $4)";
 	pool.query(sql, [userName, gamescore, difficulty, endtime], (err, pgRes) => {
@@ -132,7 +132,7 @@ app.get('/api/auth/profile/:userName', function (req, res) {
 
 app.delete('/api/auth/profile/:userName', function (req, res) {
 	var userName = req.params.userName;
-	console.log(userName);
+	//console.log(userName);
 	let sql = "DELETE FROM ftduser WHERE username=$1";
 	pool.query(sql, [userName], (err, pgRes) => {
   		if (err) {
@@ -179,9 +179,9 @@ app.put('/api/auth/profile/:userName', function (req, res) {
 		});
 	}
 
-	console.log("trying to update profile for" + oriUsername);
-	console.log(sql);
-	console.log("username: " + newUsername + " password: " + password + " birthday: " + birthday + " skill: " + skill + "prefer: " + prefer);
+	//console.log("trying to update profile for" + oriUsername);
+	//console.log(sql);
+	//console.log("username: " + newUsername + " password: " + password + " birthday: " + birthday + " skill: " + skill + "prefer: " + prefer);
 });
 
 app.post('/api/auth/logout', function (req, res) {
@@ -200,7 +200,7 @@ app.post('/api/register', function (req, res, next) {
 		var user_pass = Buffer.from(m[1], 'base64').toString()
 		m = /^(.*):(.*)$/.exec(user_pass); // probably should do better than this
 
-		console.log(req.body);
+		//console.log(req.body);
 		var reqdata = req.body;
 		var birthday = reqdata.birthday;
 		var skill = reqdata.skill;
@@ -208,8 +208,8 @@ app.post('/api/register', function (req, res, next) {
 
 		var username = m[1];
 		var password = m[2];
-		console.log("trying to register");
-		console.log("username: " + username + " password: " + password + " birthday: " + birthday + " skill: " + skill);
+		//console.log("trying to register");
+		//console.log("username: " + username + " password: " + password + " birthday: " + birthday + " skill: " + skill);
 
 		let sql = "INSERT INTO ftduser VALUES($1, sha512($2), $3, $4, $5)";
         pool.query(sql, [username, password, birthday, skill, prefer], (err) => {
