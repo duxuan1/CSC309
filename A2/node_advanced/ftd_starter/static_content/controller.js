@@ -7,6 +7,7 @@ const TIMEOUT = 2300;
 //$('html,body').css('cursor','crosshair');
 function setupGame(){
         stage=new Stage(document.getElementById('stage'));
+        // https://javascript.info/keyboard-events
 }
 
 // function startGame(){
@@ -18,10 +19,13 @@ function startGame(){
                 stage.step(); 
                 stage.draw();
                 if (stage.getState() == -1 || stage.getState() == 1) {
-                        pauseGame();
+                        endGame();
                         console.log("game finish");
                         //$("#restartbtns").show();
-                        saveGameRecord(stage);
+                        if(!stage.saved){
+                                saveGameRecord();
+                                stage.saved = true;
+                        }
                 }},
         100);
 }
@@ -34,11 +38,15 @@ function pauseGame(){
 function endGame() {
 	clearInterval(interval);
 	interval = null;
+        document.removeEventListener('keydown', moveByKey);
+        document.removeEventListener('keyup', stopByKey);
+        document.removeEventListener('mousemove', moveByMouse);
+        document.removeEventListener('mouseup', clickByMouse);
 }
 
 function restartGame(){
         setupGame();
-        initializeGame(stage);
+        initializeGame();
 }
 
 function moveByKey(event){
@@ -98,8 +106,7 @@ function moveByMouse(event){
         }
 }
 
-function initializeGame(stage){
-        console.log("set game");
+function initializeGame(){
         var numNormal = $("#enemyNumSlider").val();
         var numSmart = $("#smartEnemyNumSlider").val();
         var numSmarter = $("#evenSmarterEnemyNumSlider").val();
@@ -122,11 +129,12 @@ function initializeGame(stage){
                 "difficulty":difficulty
         }
         stage.setgameParamter(gameSetting);
-        // https://javascript.info/keyboard-events
-	document.addEventListener('keydown', moveByKey);
+        document.addEventListener('keydown', moveByKey);
         document.addEventListener('keyup', stopByKey);
         document.addEventListener('mousemove', moveByMouse);
         document.addEventListener('mouseup', clickByMouse);
+        $("#gameMain").show();
+        $("#gameSetting").hide();
         play();
         //num of ememy, bullet dmage, playler health, num of obstacle
 }
@@ -186,8 +194,28 @@ function presetGameSetting(){
         //$("#restartbtns").hide();
 }
 
-function saveGameRecord(stage){
-        
+function saveGameRecord(){
+        //var endtime = new Date().toISOString();
+        var endtime = new Date().toLocaleString("en-US", {timeZone: "America/New_York"});
+        $.ajax({
+                method: "POST",
+                url: "/api/auth/stats/" + credentials.username,
+                data: JSON.stringify({
+                        "gamescore":stage.player.score,
+                        "difficulty":stage.difficulty,
+                        "endtime":endtime
+                }),
+		headers: { "Authorization": "Basic " + btoa(credentials.username + ":" + credentials.password) },
+                processData:false,
+                contentType: "application/json; charset=utf-8",
+                dataType:"json"
+        }).done(function(data, text_status, jqXHR){
+                console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
+                
+
+        }).fail(function(err){
+                console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
+        });
 }
 
 function login(){
@@ -344,10 +372,12 @@ function play(){
                 dataType:"json"
         }).done(function(data, text_status, jqXHR){
                 console.log(jqXHR.status+" "+text_status+JSON.stringify(data));
-                $("#gameMain").show();
-                $("#gameSetting").hide();
+
                 displayUI("#ui_play");
-		startGame();
+                if($("#gameSetting").is(":hidden")){
+                        startGame();
+                }
+		
 
         }).fail(function(err){
                 console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
@@ -377,7 +407,7 @@ function getInstruction(){
 function getStats(){
         $.ajax({
                 method: "GET",
-                url: "/api/auth/stats/" + credentials.username,
+                url: "/api/auth/stats",
                 data: JSON.stringify({}),
 		headers: { "Authorization": "Basic " + btoa(credentials.username + ":" + credentials.password) },
                 processData:false,
@@ -388,6 +418,34 @@ function getStats(){
                 
                 pauseGame();
                 displayUI("#ui_stats");
+
+                $(".newLeaders").remove();
+
+                console.log(new Date().toLocaleString("en-US", {timeZone: "America/New_York"}));
+                var easyCount = 0;
+                var normalCount = 0;
+                var hardCount = 0;
+                data.forEach(function(record){
+                        if(record["difficulty"]=="easy" && easyCount<10){
+                                easyCount+=1;
+                                var row = "<tr class='newLeaders'><th><label>" + easyCount + "</label></th><td>" + record["username"] + 
+                                "</td><td>" + record["gamescore"] + "</td><td>" + record["endtime"] + "</td></tr>";
+                                $(row).appendTo("#easyGames");
+                        }else if(record["difficulty"]=="normal" && normalCount<10){
+                                normalCount+=1;
+                                var row = "<tr class='newLeaders'><th><label>" + normalCount + "</label></th><td>" + record["username"] + 
+                                "</td><td>"+ record["gamescore"] + "</td><td>" + record["endtime"] + "</td></tr>";
+                                $(row).appendTo("#normalGames");
+                        }else if(record["difficulty"]=="hard" && hardCount<10){
+                                hardCount+=1;
+                                var row = "<tr class='newLeaders'><th><label>" + hardCount + "</label></th><td>" + record["username"] + 
+                                "</td><td>"+ record["gamescore"] + "</td><td>" + record["endtime"] + "</td></tr>";
+                                $(row).appendTo("#hardGames");
+                        }
+                });
+
+                //var foo = $("<tr><th><label>Birthday:</label></th></tr>").appendTo("#easyGames");
+                
 
         }).fail(function(err){
                 console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));
@@ -732,7 +790,7 @@ $(function(){
                         $("#" + Sldid).text($(this).val());
                 });
         });
-        $("#startGame").on('click', function(){ initializeGame(stage) });
+        $("#startGame").on('click', function(){ initializeGame() });
 
         //Game restart
         $("#restart").on('click', function(){ restartGame();});
