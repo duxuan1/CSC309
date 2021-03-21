@@ -1,0 +1,16 @@
+Features: For each feature you implement, move to the Implemented section and
+explain who did it (utorid) and how you did it. You can consider these as 
+almost user stories, if you just add a bit to them. Add more features/user stories at the bottom.
+Move them up when completed.
+
+------------------------------------------------------------------------------------
+Implemented: 
+------------------------------------------------------------------------------------
+0) Login
+   Done by: arnold
+   Explanation: created schema, including appuser table, populated with 
+   default user. Also created handler for login state as well as login page.
+
+------------------------------------------------------------------------------------
+Unimplemented:
+------------------------------------------------------------------------------------

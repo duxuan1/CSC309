@@ -1,0 +1,1 @@
+auser | apassword | email not defined | gender not defined | favourite not defined | 0 | 0 | 0

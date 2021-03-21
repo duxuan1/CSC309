@@ -1,0 +1,9 @@
+./setup.sh webdbuser localhost webdb password
+
+# DB_HOST = localhost
+# DB_USER = webdbuser
+# DB_PASSWORD = password
+# DB_NAME = webdb
+
+# If you want to talk directly to the db, with password: password
+# psql -U webdbuser -d webdb -h localhost 

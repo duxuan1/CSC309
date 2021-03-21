@@ -1,0 +1,16 @@
+{
+  "name": "a2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "authorization.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "pg": "^8.5.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

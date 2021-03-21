@@ -1,0 +1,62 @@
+<html>
+	<body>
+		<h1>A1 Exercises</h1>
+		<ul>
+			<li> <b><a href=games00/>games00</a>:</b> Starter code. Assume user has already registered (auser, apassword).
+        		Users can't visit puzzle until they have logged in.
+			</li>
+			<li> <b><a href=games01/>games01</a>:</b> Mobile first design </li>
+			<li> <b><a href=games02/>games02</a>:</b> Responsive design </li>
+			<li> <b><a href=games03/>games03</a>:</b> Merge guessGame2MVC code into application.  When user logs in, they are placed on the GuessGame page
+<xmp>
+wget https://axiom.utm.utoronto.ca/~csc309/21s/lectures/guessGame2MVC.zip
+</xmp>
+			</li>
+			<li> <b><a href=games04/> games04</a>:</b> Add a bit of class, php, and style so that nav shows which page we are on. It would be good to pull out the nav, so it does not have to be copied everywhere. </li>
+			<li> <b><a href=games05/> games05</a>:</b> Enable Logout, after logout, you are back in the login page. You can logout from any page. </li>
+			<li> <b><a href=games06/> games06</a>:</b> Create empty "All Stats" page and "Rock Paper Scissors" pages.
+        			You will have to modify the controller so that global navigation changes the state and view.
+        			If you think about this the right way it will be simple and will function similarly to the
+        			logout button. Additionally, if the user clicks on navigation that is not yet implemented,
+        			the unavailable page should display. When the user logs in, they are taken to the allStats section of the application.
+			</li>
+			<li> <b><a href=games07/> games07</a>:</b> Merge Rock Paper Scissors code into application.  </li>
+			<li> <b><a href=games08/> games08</a>:</b> Create Frogs puzzle (mobile first), so frogs jump vertically on narrow screens, horizontally on wide screens.  </li>
+			<li> <b><a href=games09/> games09</a>:</b> registration form:
+        			<ul>
+					<li> mobile first design </li>
+					<li>  use appropriate HTML form fields, should have a wide range of inputs, including checkbox, select, radio buttons, text boxes, advanced HTML5 form fields</li>
+					<li> front end validation via appropriate HTML form fields, validation attributes </li>
+					<li> backend validation of all fields, on error, redisplay all form inputs with appropriate errors, especially: 
+                				<ul>
+							<li> verify password entered same twice </li>
+							<li> verify unique user name </li>
+						</ul> 
+					</li>
+					<li> highlight invalid form fields in the same/similar way that invalid html self highlights </li>
+					<li> save to database </li>
+					<li> use sql prepared statements </li>
+					<li> after registration is complete, go back to login page </li>
+        			</ul>
+			</li>
+			<li> <b><a href=games/> games</a>:</b> Finishing up!
+        			<ul>
+					<li> At any time, logged in users should be able to go to "All Stats", "Guess Game", "Rock Paper Scissors", "Frogs", "Profile" or "Logout". You probably did this already. </li>
+					<li> profile page: when user visits, the page is preloaded with information, page flow and validation 
+					is as in registration page. </li>
+					<li> Implement page tokens to prevent page re-submission, back button, ... </li>
+					<li> Implement stats across the application as well as implement the "All Stats" page. </li>
+					<li> Improve the style, to make it your own. </li>
+					<li> Improve the code. 
+						<ul>
+							<li> Compartmentalize, make it simpler, clearer, more concise. </li>
+							<li> The controller is potentially complex. It would be good to compartmentalize this. </li>
+							<li> The views seem to have lots of repetition, can you simplify some of it? </li>
+						</ul>
+					</li>
+        			</ul>
+			</li>
+		</ul>
+	</body>
+</html>
+
