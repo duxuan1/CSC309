@@ -5,7 +5,7 @@ survey of technological alternatives; greater depth on some technologies. Operat
 client content, dynamic client content, dynamically served content, n-tiered architectures, web development processes, and security
 on the web. Assignments involve increasingly more complex web-based programs.
 
-Assignment1: HTML,CSS,PHP (Implement a game website inclued guess game, rock paper scissor, user login/register page)
+Assignment1: HTML,CSS,PHP (Implement a game website inclued guess game, rock paper scissor, jump fprgs, with user login/register page)
 
 Assignment2: Javascript, Restful API, Ajax, Node, express, middleware, authentication, sql (Implement a fortnite game website)
 
