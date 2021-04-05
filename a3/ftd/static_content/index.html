@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta HTTP-EQUIV="EXPIRES" CONTENT="-1">
+		<meta name="viewport" content="width=device-width">
+		<link rel="stylesheet" type="text/css" href="style.css" />
+		<script src="jquery-3.5.1.min.js"></script>
+		<script language="javascript" src="model.js" > </script>
+		<script language="javascript" src="controller.js" > </script>
+		<style>
+			#ui_login { display:block; }
+			#ui_play { display:none; }
+		</style>
+		<title>f0rt9it32d</title>
+	</head>
+	<body bgcolor="ffffff">
+		<nav id="navigation">
+			<h1 id="game-main">f0rt9it32d</h1>
+			<ul>
+			<li> <button class="navbtn" id="playNav">Play</button> </li>
+			<li> <button class="navbtn" id="instructionsNav">Instructions</button> </li>
+			<li> <button class="navbtn" id="statsNav">Stats</button> </li>
+			<li> <button class="navbtn" id="profileNav">Profile</button> </li>
+			<li> <button class="navbtn" id="logoutNav">Logout</button> </li> 
+			</ul>
+		</nav>
+		<div id="ui_login" class="ui">
+			<div>
+				<h1>f0rt9it32d</h1>
+				<h1>Login</h1>
+				<table>
+					<tr>
+						<th><label for="username">User</label></th>
+						<td><input type="text" id="username" placeholder="User Name"/></td>
+						<td><b id="loginuserNameErr"></b></td>
+					</tr>
+					<tr>
+						<th><label for="password">Passowrd</label></th>
+						<td><input type="password" id="password" placeholder="Password"/></td>
+						<td><b id="loginPassErr"></b></td>
+					</tr>
+					<tr>
+						<th>&nbsp;</th>
+						<td><input type="submit" id="loginSubmit" value="Login"></td>
+					</tr>
+					<tr>
+						<th>&nbsp;</th>
+						<td><input type="submit" id="gotoRegister" value="Register"></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<div id="ui_register" class="ui">
+			<div>
+				<h1>f0rt9it32d</h1>
+				<h1>Register</h1>
+				<table>
+					<tr>
+						<th><label for="createuser">User Name</label></th>
+						<td><input type="text" id="createUser" placeholder="User Name"/></td>
+						<td><b id="userNameErr"></b></td>
+					</tr>
+
+					<tr>
+						<th><label for="createPassword">Passowrd</label></th>
+						<td><input type="password" id="createPassword" placeholder="Password" /></td>
+						<td><b id="passwordErr"></b></td>
+					</tr>
+
+					<tr><th><label for="confirmPassword">Confirm Password</label></th>
+						<td><input type="password" id="confirmPassword" placeholder="Confirm password" /></td>
+						<td><b id="confirmPassErr"></b></td>
+					</tr>
+
+					<tr><th><label for="birthday">Birthday</label></th>
+						<td> 
+							<input type="date" id="birthday" name="birthday" >
+							<td><b id="birthdayErr"></b></td>
+						</td>
+					</tr>
+
+					<tr><th><label for="skill">Skill</label></th>
+						<td> 
+							<input type="radio" id="beginner" name="skill" value="beginner" > <label for="beginner">beginner</label>
+							<input type="radio" id="intermidiate" name="skill" value="intermidiate"> <label for="intermidiate">intermidiate</label>
+							<input type="radio" id="advanced" name="skill" value="advanced"> <label for="advanced">advanced</label>
+						</td>
+						<td><b id="skillErr"></b></td>
+					</tr>
+					
+					<tr><th><label for="playtime">I plan to play:</label></th>
+						<td>
+						<input type="checkbox" id="morningbox" name="playtimebox" value="morning">
+						<label for="morningbox">morning</label>
+						<input type="checkbox" id="afternoonbox" name="playtimebox" value="afternoon">
+						<label for="afternoonbox">afternoon</label>
+						<input type="checkbox" id="eveningbox" name="playtimebox" value="evening">
+						<label for="eveningbox">evening</label>
+						</td>
+					</tr>
+					
+					<tr><th>&nbsp;</th>
+						<td><input type="submit" id="registerSubmit" value="Create your account"></td>
+					</tr>
+
+					<tr><th>&nbsp;</th>
+						<td><input type="submit" id="gotoLogin" value="Login with existing account"></td>
+					</tr>
+					
+				</table>
+				<b id="registatus"></b>
+			</div>
+		</div>
+		<div id="ui_play" class="ui">
+			<br></br>
+			<center>
+				<canvas id="stage" width="800" height="800" style="border:1px solid black;"> </canvas>
+			</center>
+		</div>
+
+		<div id="ui_instructions" class="ui">
+			<div class="profileView">
+				<dl class="instr">
+					<dt>Move</dt>
+					<dd>You can use WASD to move around the map.</dd>
+					<dt>Fire Weapon</dt>
+					<dd>Mouse click to fire your weapon aimed at the direction of where your cursor is.</dd>
+					<dt>Weapons And Ammos</dt>
+					<dd>There are weapons scatted around the map. You may pick up some powerful weapons in your adventure.
+						Your ammo is also limited. USE WISELY. There are also ammo bags waiting for you to gather.
+					</dd>
+				</dl>
+			</div>
+		</div>
+
+		<div id="ui_stats" class="ui">
+			<p>Stats in this page</p>
+		</div>
+
+		<div id="ui_profile" class="ui">
+			<div class="profileView">
+				<h1 id="profileGreeting"></h1>
+				<div id="profileInfoViewing">
+					<table class="profileTable">
+					<tr><th><label for="skill">Skill level:</label></th>
+						<td> 
+							<b id="profileSkill"></b>
+						</td>
+					</tr>
+
+					<tr><th><label for="birthday">Birthday:</label></th>
+						<td><b id="profileBirthday"></b></td>
+					</tr>
+
+					<tr><th><label for="playtime">Prefered time:</label></th>
+						<td>
+							<b id="profilePlaytime"></b>
+						</td>
+					</tr>
+					</table>
+					<button class="profilebtn" id="profileEdit">Edit profile</button>	
+				</div>
+				
+				<div id="profileInfoEditing">
+					<table class="profileTable">
+						<tr>
+							<th><label for="changeUserName">User Name:</label></th>
+							<td><input type="text" id="changeUserName" placeholder="User Name"/></td>
+						</tr>
+
+						<tr><th><label for="birthday">Birthday</label></th>
+							<td> 
+								<input type="date" id="newBirthday" name="birthday" >
+							</td>
+						</tr>
+
+						<tr><th><label for="skill">New Skill Level:</label></th>
+							<td> 
+								<input type="radio" id="profilebeginner" name="pskill" value="beginner" > <label for="beginner">beginner</label>
+								<input type="radio" id="profileintermidiate" name="pskill" value="intermidiate"> <label for="intermidiate">intermidiate</label>
+								<input type="radio" id="profileadvanced" name="pskill" value="advanced"> <label for="advanced">advanced</label>
+							</td>
+						</tr>
+
+						<tr><th><label for="playtime">I plan to play:</label></th>
+							<td>
+							<input type="checkbox" class="profileSettingplaytime" id="pmorningbox" name="playtimebox" value="morning">
+							<label for="morningbox">morning</label>
+							<input type="checkbox" class="profileSettingplaytime" id="pafternoonbox" name="playtimebox" value="afternoon">
+							<label for="afternoonbox">afternoon</label>
+							<input type="checkbox" class="profileSettingplaytime" id="peveningbox" name="playtimebox" value="evening">
+							<label for="eveningbox">evening</label>
+							</td>
+						</tr>
+
+						<tr>
+							<th>&nbsp;</th>
+						</tr>
+
+						<tr>
+							<th><label for="newPassword"><ins>Change Password</ins></label></th>
+						</tr>
+
+						<tr>
+							<th><label for="newPassword">Original Passowrd:</label></th>
+							<td><input type="password" id="originalPassword" placeholder="Original Password" /></td>
+							
+						</tr>
+
+						<tr>
+							<th><label for="newPassword">New Passowrd:</label></th>
+							<td><input type="password" id="newPassword" placeholder="New Password" /></td>
+						</tr>
+
+						<tr>
+							<th><label for="confirmNewPassword">Confirm New Password:</label></th>
+							<td><input type="password" id="confirmNewPassword" placeholder="Confirm new password" /></td>
+							
+						</tr>
+
+						<tr>
+							<th>&nbsp;</th>
+							<td><b id="editingStatus"></b></td>
+						</tr>
+
+						
+					</table>
+					<div>
+						<button class="profilebtn" id="profileCancel">Cancel</button>
+						<button class="profilebtn" id="profileSave">Save</button>
+						<div class="deletebtnSet">
+							<button class="profilebtn" id="profileDelete">Delete Account</button>
+							<button class="profilebtn" id="confirmDelete">Confirm Deletion</button>
+						</div>
+					</div>
+				</div>
+			</div>
+				
+		</div>
+	</body>
+</html>
