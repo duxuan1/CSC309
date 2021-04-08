@@ -13,8 +13,8 @@ function circle_interaction(x1, y1, r1, x2, y2, r2) {
 }
 
 class Stage {
-	constructor(canvas){
-		this.canvas = canvas;
+	constructor(){
+		//this.canvas = canvas;
 		this.saved = false;
 	
 		this.actors=[]; // all actors on this stage (monsters, player, boxes, ...)
@@ -35,8 +35,8 @@ class Stage {
 
 
 		// the logical width and height of the stage
-		this.width=canvas.width;
-		this.height=canvas.height;
+		//this.width=canvas.width;
+		//this.height=canvas.height;
 	}
 
 	addPlayer(player){
@@ -769,3 +769,5 @@ class FuckingSmartEnemy extends SmartEnemy {
 		this.intPosition();
 	}
 }
+
+module.exports.Stage = Stage;
