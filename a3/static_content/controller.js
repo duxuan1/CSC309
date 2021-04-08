@@ -1,6 +1,7 @@
 var stage=null;
 var view = null;
 var interval=null;
+var socket = null;
 var credentials={ "username": "", "password":"" };
 const USER_EXIST = 23505;
 const TIMEOUT = 2300;
@@ -127,16 +128,19 @@ function initializeGame(){
                 "playerHealthMul":playerHealthMul,
                 "enemyHealthMul":enemyHealthMul,
                 "DMGMul":DMGMul,
-                "difficulty":difficulty
+                "difficulty":difficulty,
+                "initialize":true
         }
-        stage.setgameParamter(gameSetting);
+        //stage.setgameParamter(gameSetting);
+        socket.send(JSON.stringify(gameSetting));
+
         document.addEventListener('keydown', moveByKey);
         document.addEventListener('keyup', stopByKey);
         document.addEventListener('mousemove', moveByMouse);
         document.addEventListener('mouseup', clickByMouse);
         $("#gameMain").show();
         $("#gameSetting").hide();
-        play();
+        //play();
         //num of ememy, bullet dmage, playler health, num of obstacle
 }
 
@@ -257,9 +261,20 @@ function login(){
                 $("#gameMain").hide();
                 $("#gameSetting").show();
                 displayUI("#ui_play");
-                setupGame();
+                //setupGame();
                 //initializeGame();
                 //play();
+                socket = new WebSocket(`ws://${window.location.hostname}:8001`);
+                socket.onopen = function (event) {
+                        console.log("connected");
+                };
+                socket.onclose = function (event) {
+                        alert("closed code:" + event.code + " reason:" +event.reason + " wasClean:"+event.wasClean);
+                };
+                socket.onmessage = function (event) {
+                        console.log("addd");
+                }
+
 
         }).fail(function(err){
                 console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));

@@ -12,6 +12,7 @@ npm init
 
 npm install express
 npm install pg
+npm install ws
 
 # check out the package.json now
 # check out node_modules

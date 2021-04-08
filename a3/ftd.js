@@ -2,9 +2,15 @@
 // https://medium.com/@viral_shah/express-middlewares-demystified-f0c2c37ea6a1
 // https://www.sohamkamani.com/blog/2018/05/30/understanding-how-expressjs-works/
 
+//import Stage from './static_content/model';
+const stage = require('./static_content/model');
+var model = null;
+var interval=null;
 var port = 8000; 
 var express = require('express');
 var app = express();
+//var staticPort = 10000;
+var webSocketPort = port+1;
 
 const { Pool } = require('pg')
 const pool = new Pool({
@@ -16,6 +22,7 @@ const pool = new Pool({
 });
 
 const bodyParser = require('body-parser'); // we used this middleware to parse POST bodies
+const { request } = require('express');
 
 function isObject(o){ return typeof o === 'object' && o !== null; }
 function isNaturalNumber(value) { return /^\d+$/.test(value); }
@@ -247,3 +254,58 @@ app.listen(port, function () {
   	console.log('Example app listening on port '+port);
 });
 
+// Web Sockets
+var WebSocketServer = require('ws').Server
+,wss = new WebSocketServer({port: webSocketPort});
+
+var messages=["apple", "pie", "apex"];
+
+wss.on('close', function() {
+	console.log('disconnected');
+});
+
+wss.broadcast = function(message){
+	for(let ws of this.clients){ 
+		ws.send(message); 
+	}
+
+	// Alternatively
+	// this.clients.forEach(function (ws){ ws.send(message); });
+}
+
+wss.on('connection', function(ws) {
+	var i;
+	for(i=0;i<messages.length;i++){
+		ws.send(messages[i]);
+	}
+	model = new stage.Stage();
+	ws.on('message', function(message) {
+		var playerReq = JSON.parse(message);
+		console.log(playerReq);
+		if(playerReq.hasOwnProperty('initialize')){
+			model.setgameParamter(playerReq);
+			startGame();
+		}
+		// ws.send(message); 
+		//wss.broadcast(message);
+		//messages.push(message);
+	});
+});
+
+function startGame(){
+	interval=setInterval(function(){
+                model.step();
+				console.log('model took a step');
+                // stage.draw();
+                // if (stage.getState() == -1 || stage.getState() == 1) {
+                //         endGame();
+                //         //console.log("game finish");
+                //         //$("#restartbtns").show();
+                //         if(!stage.saved){
+                //                 saveGameRecord();
+                //                 stage.saved = true;
+                //         }
+                // }
+			},
+        50);
+}
