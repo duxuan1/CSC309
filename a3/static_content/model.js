@@ -107,6 +107,7 @@ class Stage {
 			var velocity = new Pair(rand(5), rand(5));
 			var colour= 'rgba(225,0,0,1)';
 			var position = new Pair(x,y);
+			console.log(typeof this);
 			var enemy = new Enemy(this, position, velocity, colour, radius);
 			this.addActor(enemy);
 			this.enemies.push(enemy);
@@ -676,7 +677,7 @@ class Enemy extends Ball {
 		// bullet have certain range
 		if (this.timer >= 25) {
 			// create a bullet, display on the stage
-			this.fire();
+			//this.fire();
 			this.timer = -1;
 		}
 		this.timer += 1;
@@ -770,4 +771,20 @@ class FuckingSmartEnemy extends SmartEnemy {
 	}
 }
 
-module.exports.Stage = Stage;
+//module.exports.Stage = Stage;
+module.exports = {
+	Stage: Stage,
+	Enemy: Enemy,
+	Pair: Pair,
+	Ball: Ball,
+	Obstacle: Obstacle,
+	Bullet:Bullet,
+	Player:Player,
+	EnemyBullet:EnemyBullet,
+	AmmoBag:AmmoBag,
+	Cannonball:Cannonball,
+	SmartEnemy:SmartEnemy,
+	FuckingSmartEnemy:FuckingSmartEnemy
+}
+//module.exports.other = {Enemy, SmartEnemy, FuckingSmartEnemy};
+//export {Stage, Enemy, Pair, Ball, Obstacle, Bullet, Player, AmmoBag, Cannonball, SmartEnemy, FuckingSmartEnemy, Cannonball};
