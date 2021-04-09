@@ -1,3 +1,5 @@
+//const client_model = require('./model');
+
 var stage=null;
 var view = null;
 var interval=null;
@@ -261,9 +263,7 @@ function login(){
                 $("#gameMain").hide();
                 $("#gameSetting").show();
                 displayUI("#ui_play");
-                //setupGame();
-                //initializeGame();
-                //play();
+                setupGame();
                 socket = new WebSocket(`ws://${window.location.hostname}:8001`);
                 socket.onopen = function (event) {
                         console.log("connected");
@@ -274,6 +274,8 @@ function login(){
                 socket.onmessage = function (event) {
                         console.log("addd");
                 }
+                initializeGame();
+                play();
 
 
         }).fail(function(err){

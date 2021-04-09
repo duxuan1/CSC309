@@ -3,6 +3,7 @@
 // https://www.sohamkamani.com/blog/2018/05/30/understanding-how-expressjs-works/
 
 //import Stage from './static_content/model';
+//import {Stage, Enemy, Pair, Ball, Obstacle, Bullet, Player, AmmoBag, Cannonball, SmartEnemy, FuckingSmartEnemy, Cannonball} from './static_content/model';
 const stage = require('./static_content/model');
 var model = null;
 var interval=null;
@@ -254,6 +255,8 @@ app.listen(port, function () {
   	console.log('Example app listening on port '+port);
 });
 
+model = new stage.Stage();
+
 // Web Sockets
 var WebSocketServer = require('ws').Server
 ,wss = new WebSocketServer({port: webSocketPort});
@@ -278,7 +281,6 @@ wss.on('connection', function(ws) {
 	for(i=0;i<messages.length;i++){
 		ws.send(messages[i]);
 	}
-	model = new stage.Stage();
 	ws.on('message', function(message) {
 		var playerReq = JSON.parse(message);
 		console.log(playerReq);
