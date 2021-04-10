@@ -71,7 +71,8 @@ function moveByKey(event){
                 socket.send(JSON.stringify({"player":credentials.username, "moveBy":moveMap[key]}));
 	}
         if (key == 'r') {
-                stage.player.switchWeapon(); 
+                //stage.player.switchWeapon();
+                socket.send(JSON.stringify({"player":credentials.username, "switchWeapon":true}))
         }
 }
 
@@ -681,6 +682,7 @@ function logout(){
                 credentials={ "username": "", "password":"" };
         	displayUI("#ui_login");
                 endGame();
+                socket.close(1000);
 
         }).fail(function(err){
                 console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));

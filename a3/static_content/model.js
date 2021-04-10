@@ -236,6 +236,14 @@ class Stage {
 		});
 	}
 
+	switchWeapon(player){
+		this.player.forEach((p)=>{
+			if(p.name==player){
+				p.switchWeapon();
+			}
+		});
+	}
+
 	// Take one step in the animation of the game.  Do this by asking each of the actors to take a single step. 
 	// NOTE: Careful if an actor died, this may break!
 	step(){

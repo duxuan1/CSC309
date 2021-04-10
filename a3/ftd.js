@@ -270,7 +270,8 @@ wss.on('close', function() {
 
 wss.broadcast = function(message){
 	for(let ws of this.clients){ 
-		ws.send(message); 
+		ws.send(message);
+		//console.log(ws);
 	}
 
 	// Alternatively
@@ -285,7 +286,7 @@ wss.on('connection', function(ws) {
 
 	ws.on('message', function(message) {
 		var playerReq = JSON.parse(message);
-		console.log(playerReq);
+		//console.log(playerReq);
 		if(playerReq.hasOwnProperty('initialize')){
 			model.setgameParamter(playerReq);
 			startGame();
@@ -303,6 +304,8 @@ wss.on('connection', function(ws) {
 			model.aimPlayer(playerReq.player, playerReq.aim.x, playerReq.aim.y);
 		}else if(playerReq.hasOwnProperty('fire')){
 			model.firePlayer(playerReq.player);
+		}else if(playerReq.hasOwnProperty('switchWeapon')){
+			model.switchWeapon(playerReq.player);
 		}
 		//ws.send(message); 
 		//wss.broadcast(message);
