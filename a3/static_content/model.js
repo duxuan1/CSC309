@@ -236,12 +236,23 @@ class Stage {
 		});
 	}
 
+
 	switchWeapon(player){
 		this.player.forEach((p)=>{
 			if(p.name==player){
 				p.switchWeapon();
 			}
 		});
+
+	checkPlayerHealth() {
+        var i;
+        for (i = 0; i < this.player.length; i++) {
+                if (this.player[i].health <= 0) {
+                        var p = this.player[i];
+                        this.player.splice(i, 1);
+                        this.removeActor(p);
+                }
+        }
 	}
 
 	// Take one step in the animation of the game.  Do this by asking each of the actors to take a single step. 
@@ -249,6 +260,14 @@ class Stage {
 	step(){
 		for(var i=0;i<this.actors.length;i++){
 			this.actors[i].step();
+			this.checkPlayerHealth();
+		}
+		if (this.player.length == 0) {
+			this.state = -1;
+		} else if (this.enemies.length == 0) {
+			this.state = 1;
+		} else {
+			this.state = 0;
 		}
 	}
 
@@ -272,13 +291,7 @@ class Stage {
 
 	// notify controller by game states
 	getState() {
-		if (this.player.health <= 0) {
-			return -1
-		}
-		if (this.enemies.length == 0) {
-			return 1;
-		}
-		return 0;
+		return this.state;
 	}
 
 	// return the first actor at coordinates (x,y) return null if there is no such actor
@@ -744,7 +757,6 @@ class Player extends Ball {
 		context.fillText(HP_text, this.x - 1.5 * this.radius, this.y + this.radius * 2);
 
 		context.font = 'normal bold 0.8em courier';
-		console.log(this.name);
 		context.fillText(this.name, this.x - 1.5 * this.radius, this.y - this.radius * 2);
 
 		var weapon_text;

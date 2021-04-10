@@ -41,6 +41,25 @@ class Stage {
 	}
 
 
+	drawWin() {
+		this.state = 1;
+		var context = this.canvas.getContext('2d');
+		context.clearRect(0, 0, this.width, this.height);
+		context.font = 'normal bold 5em courier';
+		var text = "you win";
+		context.fillText(text, 200, 400);
+	}
+
+	drawLose() {
+		this.state = -1;
+		var context = this.canvas.getContext('2d');
+		context.clearRect(0, 0, this.width, this.height);
+		context.font = 'normal bold 5em courier';
+		var text = "you lose";
+		context.fillText(text, 200, 400);
+	}
+
+
 	draw(){
 		var context = this.canvas.getContext('2d');
 		context.clearRect(0, 0, this.width, this.height);

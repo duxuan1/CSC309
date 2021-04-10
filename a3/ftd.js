@@ -296,6 +296,7 @@ wss.on('connection', function(ws) {
 		}else if(playerReq.hasOwnProperty('joinPlayer')){
 			if(model.state==2){
 				ws.send("game not started");
+
 			}else{
 				ws.send("joined");
 				model.addPlayer(playerReq.joinPlayer);
@@ -307,6 +308,7 @@ wss.on('connection', function(ws) {
 		}else if(playerReq.hasOwnProperty('switchWeapon')){
 			model.switchWeapon(playerReq.player);
 		}
+
 		//ws.send(message); 
 		//wss.broadcast(message);
 		//messages.push(message);
@@ -315,20 +317,15 @@ wss.on('connection', function(ws) {
 
 function startGame(){
 	interval=setInterval(function(){
-                model.step();
+        model.step();
+				if (model.getState() == -1) {
+					wss.broadcast("lose");
+				} else if (model.getState() == 1) {
+					wss.broadcast("win");
+				}
+
 				newWorld = model.getModelState();
 				wss.broadcast(JSON.stringify(newWorld));
-				//console.log('model took a step');
-                // stage.draw();
-                // if (stage.getState() == -1 || stage.getState() == 1) {
-                //         endGame();
-                //         //console.log("game finish");
-                //         //$("#restartbtns").show();
-                //         if(!stage.saved){
-                //                 saveGameRecord();
-                //                 stage.saved = true;
-                //         }
-                // }
 			},
         50);
 }

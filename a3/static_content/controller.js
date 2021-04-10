@@ -17,23 +17,9 @@ function setupGame(){
         // https://javascript.info/keyboard-events
 }
 
-// function startGame(){
-// 	interval=setInterval(function(){stage.step(); stage.draw(); },100);
-// }
-
 function startGame(){
 	interval=setInterval(function(){
-                //stage.step(); 
                 stage.draw();
-                // if (stage.getState() == -1 || stage.getState() == 1) {
-                //         endGame();
-                //         //console.log("game finish");
-                //         //$("#restartbtns").show();
-                //         if(!stage.saved){
-                //                 saveGameRecord();
-                //                 stage.saved = true;
-                //         }
-                // }
         },
         50);
 }
@@ -296,7 +282,16 @@ function login(){
                                 document.addEventListener('mousemove', moveByMouse);
                                 document.addEventListener('mouseup', clickByMouse);
                                 play();
-                        }else{
+                        } else if (event.data == "win") {
+                                console.log("received message");
+                                stage.drawWin();
+                                endGame();
+                        } else if (event.data == "lose") {
+                                console.log("received message");
+                                stage.drawLose();
+                                endGame();
+                        }
+                        else{
                                 stage.applyNewWorld(JSON.parse(event.data));
                         }      
                 };
