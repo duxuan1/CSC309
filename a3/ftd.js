@@ -3,6 +3,7 @@
 // https://www.sohamkamani.com/blog/2018/05/30/understanding-how-expressjs-works/
 
 //import Stage from './static_content/model';
+//import {Stage, Enemy, Pair, Ball, Obstacle, Bullet, Player, AmmoBag, Cannonball, SmartEnemy, FuckingSmartEnemy, Cannonball} from './static_content/model';
 const stage = require('./static_content/model');
 var model = null;
 var interval=null;
@@ -23,6 +24,7 @@ const pool = new Pool({
 
 const bodyParser = require('body-parser'); // we used this middleware to parse POST bodies
 const { request } = require('express');
+const { Pair } = require('./static_content/model');
 
 function isObject(o){ return typeof o === 'object' && o !== null; }
 function isNaturalNumber(value) { return /^\d+$/.test(value); }
@@ -254,6 +256,8 @@ app.listen(port, function () {
   	console.log('Example app listening on port '+port);
 });
 
+model = new stage.Stage();
+
 // Web Sockets
 var WebSocketServer = require('ws').Server
 ,wss = new WebSocketServer({port: webSocketPort});
@@ -274,19 +278,33 @@ wss.broadcast = function(message){
 }
 
 wss.on('connection', function(ws) {
-	var i;
-	for(i=0;i<messages.length;i++){
-		ws.send(messages[i]);
-	}
-	model = new stage.Stage();
+	// var i;
+	// for(i=0;i<messages.length;i++){
+	// 	ws.send(messages[i]);
+	// }
+
 	ws.on('message', function(message) {
 		var playerReq = JSON.parse(message);
 		console.log(playerReq);
 		if(playerReq.hasOwnProperty('initialize')){
 			model.setgameParamter(playerReq);
 			startGame();
-		}
-		// ws.send(message); 
+		}else if(playerReq.hasOwnProperty('moveBy')){
+			var velocity = new Pair(playerReq.moveBy.x, playerReq.moveBy.y);
+			model.movePlayer(playerReq.player, velocity);
+		}else if(playerReq.hasOwnProperty('joinPlayer')){
+			if(model.state==2){
+				ws.send("game not started");
+			} else {
+				ws.send("joined");
+				model.addPlayer(playerReq.joinPlayer);
+			}
+		}else if(playerReq.hasOwnProperty('aim')){
+			model.aimPlayer(playerReq.player, playerReq.aim.x, playerReq.aim.y);
+		}else if(playerReq.hasOwnProperty('fire')){
+			model.firePlayer(playerReq.player);
+		} 
+		//ws.send(message); 
 		//wss.broadcast(message);
 		//messages.push(message);
 	});
@@ -295,17 +313,14 @@ wss.on('connection', function(ws) {
 function startGame(){
 	interval=setInterval(function(){
                 model.step();
-				console.log('model took a step');
-                // stage.draw();
-                // if (stage.getState() == -1 || stage.getState() == 1) {
-                //         endGame();
-                //         //console.log("game finish");
-                //         //$("#restartbtns").show();
-                //         if(!stage.saved){
-                //                 saveGameRecord();
-                //                 stage.saved = true;
-                //         }
-                // }
+				if (model.getState() == -1) {
+					wss.broadcast("lose");
+				} else if (model.getState() == 1) {
+					wss.broadcast("win");
+				}
+
+				newWorld = model.getModelState();
+				wss.broadcast(JSON.stringify(newWorld));
 			},
         50);
 }
