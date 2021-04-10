@@ -40,6 +40,7 @@ class Stage {
 		this.height=canvas.height;
 	}
 
+
 	drawWin() {
 		this.state = 1;
 		var context = this.canvas.getContext('2d');
@@ -57,6 +58,7 @@ class Stage {
 		var text = "you lose";
 		context.fillText(text, 200, 400);
 	}
+
 
 	draw(){
 		var context = this.canvas.getContext('2d');

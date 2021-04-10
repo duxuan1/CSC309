@@ -270,7 +270,8 @@ wss.on('close', function() {
 
 wss.broadcast = function(message){
 	for(let ws of this.clients){ 
-		ws.send(message); 
+		ws.send(message);
+		//console.log(ws);
 	}
 
 	// Alternatively
@@ -285,7 +286,7 @@ wss.on('connection', function(ws) {
 
 	ws.on('message', function(message) {
 		var playerReq = JSON.parse(message);
-		console.log(playerReq);
+		//console.log(playerReq);
 		if(playerReq.hasOwnProperty('initialize')){
 			model.setgameParamter(playerReq);
 			startGame();
@@ -295,7 +296,8 @@ wss.on('connection', function(ws) {
 		}else if(playerReq.hasOwnProperty('joinPlayer')){
 			if(model.state==2){
 				ws.send("game not started");
-			} else {
+
+			}else{
 				ws.send("joined");
 				model.addPlayer(playerReq.joinPlayer);
 			}
@@ -303,7 +305,10 @@ wss.on('connection', function(ws) {
 			model.aimPlayer(playerReq.player, playerReq.aim.x, playerReq.aim.y);
 		}else if(playerReq.hasOwnProperty('fire')){
 			model.firePlayer(playerReq.player);
-		} 
+		}else if(playerReq.hasOwnProperty('switchWeapon')){
+			model.switchWeapon(playerReq.player);
+		}
+
 		//ws.send(message); 
 		//wss.broadcast(message);
 		//messages.push(message);
@@ -312,7 +317,7 @@ wss.on('connection', function(ws) {
 
 function startGame(){
 	interval=setInterval(function(){
-                model.step();
+        model.step();
 				if (model.getState() == -1) {
 					wss.broadcast("lose");
 				} else if (model.getState() == 1) {

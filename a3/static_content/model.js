@@ -236,6 +236,14 @@ class Stage {
 		});
 	}
 
+
+	switchWeapon(player){
+		this.player.forEach((p)=>{
+			if(p.name==player){
+				p.switchWeapon();
+			}
+		});
+
 	checkPlayerHealth() {
         var i;
         for (i = 0; i < this.player.length; i++) {
@@ -749,7 +757,6 @@ class Player extends Ball {
 		context.fillText(HP_text, this.x - 1.5 * this.radius, this.y + this.radius * 2);
 
 		context.font = 'normal bold 0.8em courier';
-		// console.log(this.name);
 		context.fillText(this.name, this.x - 1.5 * this.radius, this.y - this.radius * 2);
 
 		var weapon_text;
