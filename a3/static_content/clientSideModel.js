@@ -166,6 +166,9 @@ class Stage {
 			}else if(actor.type=="Other"){
 				var other = new Ball(this, new Pair(actor.position.x, actor.position.y), null, actor.colour, actor.radius);
 				this.addActor(other);
+			}else if(actor.type=="AmmoBag"){
+				var ammo = new AmmoBag(this, new Pair(actor.position.x, actor.position.y), null, actor.colour, actor.radius);
+				this.addActor(ammo);
 			}
 		});
 		//console.log(this.actors);

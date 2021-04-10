@@ -66,15 +66,15 @@ app.use('/api/auth', function (req, res, next) {
 		let sql = 'SELECT * FROM ftduser WHERE username=$1 and password=sha512($2)';
         pool.query(sql, [username, password], (err, pgRes) => {
   			if (err){
-                res.status(403).json({ error: 'Not authorized'});
+                res.status(401).json({ error: 'Not authorized'});
 			} else if(pgRes.rowCount == 1){
 				next(); 
 			} else {
-				res.status(403).json({ error: 'Not authorized'});
+				res.status(401).json({ error: 'Not authorized'});
 			}
 		});
 	} catch(err) {
-        res.status(403).json({ error: 'Not authorized'});
+        res.status(401).json({ error: 'Not authorized'});
 	}
 });
 
@@ -230,7 +230,7 @@ app.post('/api/register', function (req, res, next) {
 			return;
 		});
 	} catch(err) {
-        res.status(403).json({ error: 'Not authorized'});
+        res.status(401).json({ error: 'Not authorized'});
 	}
 });
 
@@ -317,15 +317,16 @@ wss.on('connection', function(ws) {
 
 function startGame(){
 	interval=setInterval(function(){
-        model.step();
-				if (model.getState() == -1) {
-					wss.broadcast("lose");
-				} else if (model.getState() == 1) {
-					wss.broadcast("win");
-				}
-
-				newWorld = model.getModelState();
-				wss.broadcast(JSON.stringify(newWorld));
-			},
-        50);
+		model.step();
+		if (model.getState() == -1) {
+			wss.broadcast("lose");
+			clearInterval(interval);
+		} else if (model.getState() == 1) {
+			wss.broadcast("win");
+			clearInterval(interval);
+		}
+		newWorld = model.getModelState();
+		wss.broadcast(JSON.stringify(newWorld));
+	},
+	50);
 }

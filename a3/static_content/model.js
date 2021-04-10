@@ -243,15 +243,16 @@ class Stage {
 				p.switchWeapon();
 			}
 		});
+	}
 
 	checkPlayerHealth() {
         var i;
         for (i = 0; i < this.player.length; i++) {
-                if (this.player[i].health <= 0) {
-                        var p = this.player[i];
-                        this.player.splice(i, 1);
-                        this.removeActor(p);
-                }
+			if (this.player[i].health <= 0) {
+				var p = this.player[i];
+				this.player.splice(i, 1);
+				this.removeActor(p);
+			}
         }
 	}
 
