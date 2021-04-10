@@ -13,9 +13,10 @@ function circle_interaction(x1, y1, r1, x2, y2, r2) {
 }
 
 class Stage {
-	constructor(canvas){
+	constructor(canvas, protagonist){
 		this.canvas = canvas;
 		this.saved = false;
+		this.protagonist = protagonist;
 	
 		this.actors=[]; // all actors on this stage (monsters, player, boxes, ...)
 		this.player=null; // a special actor, the player
@@ -43,19 +44,22 @@ class Stage {
 	draw(){
 		var context = this.canvas.getContext('2d');
 		context.clearRect(0, 0, this.width, this.height);
-		if (this.getState() == 1) {
-			context.font = 'normal bold 5em courier';
-			var text = "you win";
-			context.fillText(text, 200, 400);
-		} else if (this.getState() == -1) {
-			context.font = 'normal bold 5em courier';
-			var text = "you lose";
-			context.fillText(text, 200, 400);
-		} else {
-			for(var i=0;i<this.actors.length;i++){
-				this.actors[i].draw(context);
-			}
+		for(var i=0;i<this.actors.length;i++){
+			this.actors[i].draw(context);
 		}
+		// if (this.getState() == 1) {
+		// 	context.font = 'normal bold 5em courier';
+		// 	var text = "you win";
+		// 	context.fillText(text, 200, 400);
+		// } else if (this.getState() == -1) {
+		// 	context.font = 'normal bold 5em courier';
+		// 	var text = "you lose";
+		// 	context.fillText(text, 200, 400);
+		// } else {
+		// 	for(var i=0;i<this.actors.length;i++){
+		// 		this.actors[i].draw(context);
+		// 	}
+		// }
 	}
 
 	// notify controller by game states
@@ -79,41 +83,73 @@ class Stage {
 		return null;
 	}
 
-	loadCurrentSetting(){
-		// Add the player to the center of the stage
-		var velocity = new Pair(0,0);
-		var radius = 15;
-		var colour= 'rgba(0,0,0,1)';
-		var position = new Pair(Math.floor(this.width/2), Math.floor(this.height/2));
-		this.addPlayer(new Player(this, position, velocity, colour, radius));
-	
-		this.player.health *= this.playerHealthMul;
-		// this.playerHealthMul.health = Math.round(this.playerHealthMul);
-
-		// Add enemies
-		this.addEnemies(this.normalEnemyNum);
-		// Add obstacles
-		this.addObstacles(this.obstacleNum);
-		// Add ammobags
-		this.addAmmoBags(this.ammobagNum);
-		// Add smart Enemy
-		this.addSmartEnemies(this.smartEnemyNum);
-		this.addFuckingSmartEnemies(this.fuckingSmartEnemyNum);
-
-		this.state = 0;
+	addActor(actor){
+		this.actors.push(actor);
 	}
 
-	setgameParamter(parameter){
-		this.normalEnemyNum = parameter["numNormal"];
-		this.smartEnemyNum = parameter["numSmart"];
-		this.fuckingSmartEnemyNum = parameter["numSmarter"];
-		this.obstacleNum = parameter["numObstacle"];
-		this.ammobagNum = parameter["numAmmobag"];
-		this.playerHealthMul = parameter["playerHealthMul"];
-		this.enemyHealthMul = parameter["enemyHealthMul"];
-		this.DMGMul = parameter["DMGMul"];
-		this.difficulty = parameter["difficulty"];
-		this.loadCurrentSetting();
+	// loadCurrentSetting(){
+	// 	// Add the player to the center of the stage
+	// 	var velocity = new Pair(0,0);
+	// 	var radius = 15;
+	// 	var colour= 'rgba(0,0,0,1)';
+	// 	var position = new Pair(Math.floor(this.width/2), Math.floor(this.height/2));
+	// 	this.addPlayer(new Player(this, position, velocity, colour, radius));
+	
+	// 	this.player.health *= this.playerHealthMul;
+	// 	// this.playerHealthMul.health = Math.round(this.playerHealthMul);
+
+	// 	// Add enemies
+	// 	this.addEnemies(this.normalEnemyNum);
+	// 	// Add obstacles
+	// 	this.addObstacles(this.obstacleNum);
+	// 	// Add ammobags
+	// 	this.addAmmoBags(this.ammobagNum);
+	// 	// Add smart Enemy
+	// 	this.addSmartEnemies(this.smartEnemyNum);
+	// 	this.addFuckingSmartEnemies(this.fuckingSmartEnemyNum);
+
+	// 	this.state = 0;
+	// }
+
+	// setgameParamter(parameter){
+	// 	this.normalEnemyNum = parameter["numNormal"];
+	// 	this.smartEnemyNum = parameter["numSmart"];
+	// 	this.fuckingSmartEnemyNum = parameter["numSmarter"];
+	// 	this.obstacleNum = parameter["numObstacle"];
+	// 	this.ammobagNum = parameter["numAmmobag"];
+	// 	this.playerHealthMul = parameter["playerHealthMul"];
+	// 	this.enemyHealthMul = parameter["enemyHealthMul"];
+	// 	this.DMGMul = parameter["DMGMul"];
+	// 	this.difficulty = parameter["difficulty"];
+	// 	this.loadCurrentSetting();
+	// }
+
+	applyNewWorld(actors){
+		this.actors = [];
+		actors.forEach((actor)=>{
+			if(actor.type=="Player"){
+				var player = new Player(this, new Pair(actor.x, actor.y), null, actor.colour, actor.radius, actor.name);
+				player.health = actor.health;
+				player.ammunition = actor.ammunition;
+				player.enemyCount = actor.enemyCount;
+				player.score = actor.score;
+				player.weapon = actor.weapon;
+				player.mousex = actor.mousex;
+				player.mousey = actor.mousey;
+				this.addActor(player);
+				if(actor.name = this.protagonist){
+					this.player = player;
+				}
+			}else if(actor.type=="Enemy"){
+				var enemy = new Enemy(this, new Pair(actor.position.x, actor.position.y), null, actor.colour, actor.radius);
+				enemy.health = actor.health;
+				this.addActor(enemy);
+			}else if(actor.type=="Other"){
+				var other = new Ball(this, new Pair(actor.position.x, actor.position.y), null, actor.colour, actor.radius);
+				this.addActor(other);
+			}
+		});
+		//console.log(this.actors);
 	}
 } // End Class Stage
 
@@ -203,7 +239,7 @@ class AmmoBag extends Ball {
 }
 
 class Player extends Ball {
-	constructor(stage, position, velocity, colour, radius){
+	constructor(stage, position, velocity, colour, radius, name){
 		super(stage, position, velocity, colour, radius);
 		this.mousex = 0;
 		this.mousey = 0;
@@ -212,6 +248,8 @@ class Player extends Ball {
 		this.score = 0;
 		this.weapon = 0; // 0: default weapon, 1: shotgun, 2: cannon
 		this.warning = "";
+		this.enemyCount = 0;
+		this.name = name;
 	}
 
 
@@ -231,6 +269,9 @@ class Player extends Ball {
 		var HP_text = "HP " + this.health;
 		context.fillText(HP_text, this.x - 1.5 * this.radius, this.y + this.radius * 2);
 
+		context.font = 'normal bold 0.8em courier';
+		context.fillText(this.name, this.x, this.y - this.radius * 2);
+
 		var weapon_text;
 		if (this.weapon == 0) {
 			weapon_text = "pistol " + this.ammunition;
@@ -245,7 +286,7 @@ class Player extends Ball {
 
 		var Score = "Score "  + this.score;
 		context.fillText(Score, 0, 25);
-		var enemycount = "Enemy Left "  + this.stage.enemies.length;
+		var enemycount = "Enemy Left "  + this.enemyCount;
 		context.fillText(enemycount, 0, 50);
 	}
 }

@@ -1,5 +1,9 @@
 //const client_model = require('./model');
 
+//const { Pair } = require("./clientSideModel");
+
+//const { Stage } = require("./clientSideModel");
+
 var stage=null;
 var view = null;
 var interval=null;
@@ -9,7 +13,7 @@ const USER_EXIST = 23505;
 const TIMEOUT = 2300;
 //$('html,body').css('cursor','crosshair');
 function setupGame(){
-        stage=new Stage(document.getElementById('stage'));
+        stage=new Stage(document.getElementById('stage'), credentials.username);
         // https://javascript.info/keyboard-events
 }
 
@@ -19,17 +23,18 @@ function setupGame(){
 
 function startGame(){
 	interval=setInterval(function(){
-                stage.step(); 
+                //stage.step(); 
                 stage.draw();
-                if (stage.getState() == -1 || stage.getState() == 1) {
-                        endGame();
-                        //console.log("game finish");
-                        //$("#restartbtns").show();
-                        if(!stage.saved){
-                                saveGameRecord();
-                                stage.saved = true;
-                        }
-                }},
+                // if (stage.getState() == -1 || stage.getState() == 1) {
+                //         endGame();
+                //         //console.log("game finish");
+                //         //$("#restartbtns").show();
+                //         if(!stage.saved){
+                //                 saveGameRecord();
+                //                 stage.saved = true;
+                //         }
+                // }
+        },
         50);
 }
 
@@ -62,7 +67,8 @@ function moveByKey(event){
                 'w': new Pair(0,-20),
 	};
 	if(key in moveMap){
-		stage.player.velocity=moveMap[key];
+		//stage.player.velocity=moveMap[key];
+                socket.send(JSON.stringify({"player":credentials.username, "moveBy":moveMap[key]}));
 	}
         if (key == 'r') {
                 stage.player.switchWeapon(); 
@@ -78,7 +84,8 @@ function stopByKey(event) {
                 'w': new Pair(0,0),
 	};
 	if(key in moveMap){
-		stage.player.velocity=moveMap[key];
+		//stage.player.velocity=moveMap[key];
+                socket.send(JSON.stringify({"player":credentials.username, "moveBy":moveMap[key]}));
 	}    
 }
 
@@ -89,7 +96,8 @@ function clickByMouse(event) {
                 var x = event.clientX - left_boundary;
                 var y = event.clientY - top_boundary; 
                 if (x > 0 && x < 800 && y > 0 && y < 800 && event.clientY >= 75) {
-                        stage.player.fire();
+                        //stage.player.fire();
+                        socket.send(JSON.stringify({"player":credentials.username, "fire":true}));
                 }
         }
 }
@@ -105,8 +113,10 @@ function moveByMouse(event){
                 var divide = Math.max(Math.abs(volx), Math.abs(voly)) / 20;
                 volx = volx / divide;
                 voly = voly / divide;
-                stage.player.mousex = volx;
-                stage.player.mousey = voly;
+                //stage.player.mousex = volx;
+                //stage.player.mousey = voly;
+                var aim = new Pair(volx, voly);
+                socket.send(JSON.stringify({"player":credentials.username, "aim":aim}));
         }
 }
 
@@ -122,6 +132,7 @@ function initializeGame(){
         var difficulty = $("input[type='radio'][name='gset']:checked").val();
 
         var gameSetting = {
+                "player":credentials.username,
                 "numNormal":numNormal,
                 "numSmart":numSmart,
                 "numSmarter":numSmarter,
@@ -142,7 +153,7 @@ function initializeGame(){
         document.addEventListener('mouseup', clickByMouse);
         $("#gameMain").show();
         $("#gameSetting").hide();
-        //play();
+        play();
         //num of ememy, bullet dmage, playler health, num of obstacle
 }
 
@@ -260,23 +271,34 @@ function login(){
 
                 $("#username").val("");
                 $("#password").val("");
-                $("#gameMain").hide();
-                $("#gameSetting").show();
-                displayUI("#ui_play");
                 setupGame();
                 socket = new WebSocket(`ws://${window.location.hostname}:8001`);
                 socket.onopen = function (event) {
                         console.log("connected");
+                        socket.send(JSON.stringify({"joinPlayer":credentials.username}));
                 };
                 socket.onclose = function (event) {
                         alert("closed code:" + event.code + " reason:" +event.reason + " wasClean:"+event.wasClean);
                 };
                 socket.onmessage = function (event) {
-                        console.log("addd");
-                }
-                initializeGame();
-                play();
-
+                        //console.log(event.data);
+                        if(event.data=="game not started"){
+                                $("#gameMain").hide();
+                                $("#gameSetting").show();
+                                displayUI("#ui_play");
+                        }else if(event.data=="joined"){
+                                $("#gameMain").show();
+                                $("#gameSetting").hide();
+                                displayUI("#ui_play");
+                                document.addEventListener('keydown', moveByKey);
+                                document.addEventListener('keyup', stopByKey);
+                                document.addEventListener('mousemove', moveByMouse);
+                                document.addEventListener('mouseup', clickByMouse);
+                                play();
+                        }else{
+                                stage.applyNewWorld(JSON.parse(event.data));
+                        }      
+                };
 
         }).fail(function(err){
                 console.log("fail "+err.status+" "+JSON.stringify(err.responseJSON));

@@ -24,6 +24,7 @@ const pool = new Pool({
 
 const bodyParser = require('body-parser'); // we used this middleware to parse POST bodies
 const { request } = require('express');
+const { Pair } = require('./static_content/model');
 
 function isObject(o){ return typeof o === 'object' && o !== null; }
 function isNaturalNumber(value) { return /^\d+$/.test(value); }
@@ -277,18 +278,33 @@ wss.broadcast = function(message){
 }
 
 wss.on('connection', function(ws) {
-	var i;
-	for(i=0;i<messages.length;i++){
-		ws.send(messages[i]);
-	}
+	// var i;
+	// for(i=0;i<messages.length;i++){
+	// 	ws.send(messages[i]);
+	// }
+
 	ws.on('message', function(message) {
 		var playerReq = JSON.parse(message);
 		console.log(playerReq);
 		if(playerReq.hasOwnProperty('initialize')){
 			model.setgameParamter(playerReq);
 			startGame();
+		}else if(playerReq.hasOwnProperty('moveBy')){
+			var velocity = new Pair(playerReq.moveBy.x, playerReq.moveBy.y);
+			model.movePlayer(playerReq.player, velocity);
+		}else if(playerReq.hasOwnProperty('joinPlayer')){
+			if(model.state==2){
+				ws.send("game not started");
+			}else{
+				ws.send("joined");
+				model.addPlayer(playerReq.joinPlayer);
+			}
+		}else if(playerReq.hasOwnProperty('aim')){
+			model.aimPlayer(playerReq.player, playerReq.aim.x, playerReq.aim.y);
+		}else if(playerReq.hasOwnProperty('fire')){
+			model.firePlayer(playerReq.player);
 		}
-		// ws.send(message); 
+		//ws.send(message); 
 		//wss.broadcast(message);
 		//messages.push(message);
 	});
@@ -297,7 +313,9 @@ wss.on('connection', function(ws) {
 function startGame(){
 	interval=setInterval(function(){
                 model.step();
-				console.log('model took a step');
+				newWorld = model.getModelState();
+				wss.broadcast(JSON.stringify(newWorld));
+				//console.log('model took a step');
                 // stage.draw();
                 // if (stage.getState() == -1 || stage.getState() == 1) {
                 //         endGame();
